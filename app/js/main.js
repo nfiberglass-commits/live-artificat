@@ -2,7 +2,7 @@
 
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
-import { onAuth, sendLink, signOut, tidyUrl } from "./auth.js";
+import { onAuth, sendLink, signInWithPassword, signOut, tidyUrl } from "./auth.js";
 import { loadBusy, loadMyRequests, loadPending, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
 import {
@@ -29,6 +29,27 @@ async function refreshAll() {
 
 /* ---------- sign-in gate ---------- */
 
+$("gateSignIn").addEventListener("click", async () => {
+  const tr = t();
+  const btn = $("gateSignIn");
+  const note = $("gateNote");
+  btn.disabled = true;
+  note.textContent = "";
+  try {
+    await signInWithPassword($("gateEmail").value, $("gatePass").value);
+    $("gatePass").value = "";   // don't leave it sitting in the field
+    note.textContent = "";
+  } catch (err) {
+    note.textContent =
+      err.missing ? tr.gateMissing :
+      err.badCredentials ? tr.gateWrong :
+      err.unconfirmed ? tr.gateUnconfirmed :
+      tr.gateSignInFailed;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
 $("gateSend").addEventListener("click", async () => {
   const tr = t();
   const btn = $("gateSend");
@@ -45,9 +66,11 @@ $("gateSend").addEventListener("click", async () => {
   }
 });
 
-$("gateEmail").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") $("gateSend").click();
-});
+for (const id of ["gateEmail", "gatePass"]) {
+  $(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter") $("gateSignIn").click();
+  });
+}
 
 $("signOut").addEventListener("click", async () => {
   stopWatching();

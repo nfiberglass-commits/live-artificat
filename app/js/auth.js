@@ -8,6 +8,24 @@ import { supabase } from "./supabase.js";
 import { set } from "./store.js";
 import { loadProfile } from "./data.js";
 
+// Accounts are created by Ahmed in the Supabase dashboard, so the page signs in
+// and never signs up. Nobody can create themselves an account from here.
+export async function signInWithPassword(email, password) {
+  const clean = String(email || "").trim().toLowerCase();
+  if (!clean || !password) {
+    const err = new Error("MISSING");
+    err.missing = true;
+    throw err;
+  }
+  const { error } = await supabase.auth.signInWithPassword({ email: clean, password });
+  if (error) {
+    const err = new Error(error.message || "SIGNIN_FAILED");
+    err.badCredentials = /invalid login credentials/i.test(error.message || "");
+    err.unconfirmed = /email not confirmed/i.test(error.message || "");
+    throw err;
+  }
+}
+
 export async function sendLink(email) {
   const clean = String(email || "").trim().toLowerCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(clean)) {

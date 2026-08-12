@@ -74,6 +74,23 @@ const EXTRA_CSS = `
   .gate-card p  { margin: 0 0 20px; font-size: 13.5px; color: var(--ink-2); line-height: 1.65; }
   .gate-card .field { margin-bottom: 14px; }
   .gate-card .btn { width: 100%; }
+
+  /* Secondary route: plain text, so it never competes with Sign in. */
+  .linkish {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 4px 0;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-size: 12.5px;
+    color: var(--ink-3);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    cursor: pointer;
+  }
+  .linkish:hover { color: var(--accent); }
   .gate-note {
     margin-top: 16px;
     font-family: var(--f-mono);
@@ -186,7 +203,12 @@ const GATE = `
       <label class="lbl" for="gateEmail" data-t="gateEmail">Work email</label>
       <input id="gateEmail" type="email" autocomplete="email" inputmode="email">
     </div>
-    <button class="btn" id="gateSend" type="button" data-t="gateSend">Email me a link</button>
+    <div class="field">
+      <label class="lbl" for="gatePass" data-t="gatePass">Password</label>
+      <input id="gatePass" type="password" autocomplete="current-password">
+    </div>
+    <button class="btn" id="gateSignIn" type="button" data-t="gateSignIn">Sign in</button>
+    <button class="linkish" id="gateSend" type="button" data-t="gateSend">Email me a one-time link instead</button>
     <div class="gate-note" id="gateNote"></div>
   </div>
 </div>
