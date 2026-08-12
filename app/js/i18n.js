@@ -1,0 +1,73 @@
+// Language state and the strings the hosted app adds on top of the page's own.
+
+import { STRINGS } from "./i18n-strings.js";
+import { state, set } from "./store.js";
+import { CAIRO } from "./calendar-config.js";
+
+// Strings for the sign-in gate and the approvals panel, which did not exist in
+// the offline page. Kept apart from the generated file so a rebuild never
+// overwrites them.
+const EXTRA = {
+  en: {
+    gateTitle: "Sign in",
+    gateSub: "Use your work email. We send a one-time link — there is no password to remember.",
+    gateEmail: "Work email",
+    gateSend: "Email me a link",
+    gateSent: "Link sent. Check your inbox and open it on this device.",
+    gateBadEmail: "That does not look like an email address.",
+    gateFailed: "Could not send the link. Try again, or ask Ahmed.",
+    signOut: "Sign out",
+    roleAdmin: "Admin",
+    apprTitle: "Requests waiting on you",
+    apprSub: "Approving takes the slot off the calendar for everyone else. Declining reopens it.",
+    apprNone: "Nothing waiting. All clear.",
+    apprApprove: "Approve",
+    apprDecline: "Decline",
+    apprDone: "Approved. The slot is now busy for everyone.",
+    apprDropped: "Declined. The time is open again.",
+    apprFailed: "That did not go through.",
+    live: "Live",
+    loading: "Loading availability…",
+    sent: "Request sent. It is waiting for Ahmed.",
+    sendFailed: "Could not send the request."
+  },
+  ar: {
+    gateTitle: "تسجيل الدخول",
+    gateSub: "استخدم بريد العمل. نرسل لك رابطاً لمرة واحدة — لا كلمة مرور تحفظها.",
+    gateEmail: "بريد العمل",
+    gateSend: "أرسل لي الرابط",
+    gateSent: "أُرسل الرابط. افتحه من بريدك على هذا الجهاز.",
+    gateBadEmail: "هذا لا يبدو بريداً صحيحاً.",
+    gateFailed: "تعذّر إرسال الرابط. أعد المحاولة أو اسأل أحمد.",
+    signOut: "خروج",
+    roleAdmin: "مدير",
+    apprTitle: "طلبات في انتظارك",
+    apprSub: "الموافقة تحجز الموعد فلا يظهر لغيرك. الرفض يعيده متاحاً.",
+    apprNone: "لا شيء في الانتظار.",
+    apprApprove: "موافقة",
+    apprDecline: "رفض",
+    apprDone: "تمت الموافقة. الموعد صار محجوزاً للجميع.",
+    apprDropped: "تم الرفض. الوقت متاح مرة أخرى.",
+    apprFailed: "لم يتم التنفيذ.",
+    live: "مباشر",
+    loading: "جارٍ تحميل المواعيد…",
+    sent: "أُرسل الطلب. في انتظار أحمد.",
+    sendFailed: "تعذّر إرسال الطلب."
+  }
+};
+
+export function t() {
+  return { ...STRINGS[state.lang], ...EXTRA[state.lang] };
+}
+
+export function toggleLang() {
+  set({ lang: state.lang === "en" ? "ar" : "en" });
+}
+
+export function fmt(instant, opts, zone = CAIRO) {
+  return new Intl.DateTimeFormat(t().locale, { timeZone: zone, ...opts }).format(instant);
+}
+
+export function hhmm(instant, zone = CAIRO) {
+  return fmt(instant, { hour: "2-digit", minute: "2-digit", hour12: false }, zone);
+}

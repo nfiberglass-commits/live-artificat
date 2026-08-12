@@ -1,0 +1,1246 @@
+<title>Book a meeting — Ahmed Abbas, Nile Industries</title>
+<style>
+  :root {
+    --bg:        #EFF1F0;
+    --surface:   #FFFFFF;
+    --surface-2: #E6EAE9;
+    --ink:       #101E28;
+    --ink-2:     #44565E;
+    --ink-3:     #78898F;
+    --line:      #C9D2D1;
+    --line-soft: #DDE3E2;
+    --accent:    #A85E15;
+    --accent-2:  #C8792C;
+    --accent-ink:#FFFFFF;
+    --open:      #2C6D5F;
+    --open-bg:   #DEEAE6;
+    --open-line: #A9CCC2;
+    --closed:    #8E9B9F;
+
+    --f-ui: "Segoe UI Variable Display", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --f-mono: "Cascadia Mono", "SF Mono", "Roboto Mono", Consolas, "Liberation Mono", monospace;
+    --f-ar: "Segoe UI", Tahoma, "Noto Naskh Arabic", "Traditional Arabic", serif;
+
+    --r: 3px;
+    --maxw: 1180px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg:        #0C161E;
+      --surface:   #12212C;
+      --surface-2: #1A2E3B;
+      --ink:       #E8EEEC;
+      --ink-2:     #A9BCC0;
+      --ink-3:     #74898F;
+      --line:      #263B48;
+      --line-soft: #1D2F3B;
+      --accent:    #E0913F;
+      --accent-2:  #E8A75F;
+      --accent-ink:#17222B;
+      --open:      #6BBBA3;
+      --open-bg:   #14322D;
+      --open-line: #2C5A50;
+      --closed:    #47595F;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg:        #0C161E;
+    --surface:   #12212C;
+    --surface-2: #1A2E3B;
+    --ink:       #E8EEEC;
+    --ink-2:     #A9BCC0;
+    --ink-3:     #74898F;
+    --line:      #263B48;
+    --line-soft: #1D2F3B;
+    --accent:    #E0913F;
+    --accent-2:  #E8A75F;
+    --accent-ink:#17222B;
+    --open:      #6BBBA3;
+    --open-bg:   #14322D;
+    --open-line: #2C5A50;
+    --closed:    #47595F;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--f-ui);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body[dir="rtl"] { font-family: var(--f-ar); }
+
+  .wrap {
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 28px 22px 64px;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .mast {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .mast-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  body[dir="rtl"] .eyebrow { letter-spacing: 0; font-family: var(--f-ar); font-size: 12px; }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(26px, 4.2vw, 40px);
+    line-height: 1.06;
+    letter-spacing: -0.021em;
+    font-weight: 650;
+    text-wrap: balance;
+  }
+
+  .mast-sub {
+    font-size: 14px;
+    color: var(--ink-2);
+    max-width: 46ch;
+    margin-top: 4px;
+  }
+
+  .synced {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+  body[dir="rtl"] .synced { font-family: var(--f-ar); font-size: 12.5px; letter-spacing: 0; }
+  .synced:empty { display: none; }
+
+  .synced::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--open);
+    flex-shrink: 0;
+  }
+
+  .clock {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+    flex-shrink: 0;
+  }
+  body[dir="rtl"] .clock { align-items: flex-start; }
+
+  .clock-time {
+    font-family: var(--f-mono);
+    font-size: 27px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .clock-label {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  /* ---------- toolbar ---------- */
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+    align-items: flex-end;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-grow { flex: 1 1 220px; min-width: 0; }
+
+  label.lbl, .lbl {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  body[dir="rtl"] .lbl { letter-spacing: 0; font-family: var(--f-ar); font-size: 12px; }
+
+  select, input, textarea {
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 8px 10px;
+    width: 100%;
+  }
+  select { cursor: pointer; }
+
+  select:focus-visible, input:focus-visible, textarea:focus-visible,
+  button:focus-visible, .slot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .types { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .type {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--ink-2);
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    padding: 7px 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    transition: border-color .14s, color .14s, background .14s;
+  }
+  .type:hover { border-color: var(--ink-3); color: var(--ink); }
+
+  .type[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+
+  .type .mins {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    opacity: .72;
+  }
+
+  .lang {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    border-radius: var(--r);
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  .lang:hover { border-color: var(--ink-3); color: var(--ink); }
+
+  /* ---------- week nav ---------- */
+
+  .weeknav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 20px 0 12px;
+  }
+
+  .weeklabel {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+  }
+
+  .navbtns { display: flex; gap: 6px; }
+
+  .navbtn {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--ink-2);
+    border-radius: var(--r);
+    padding: 6px 13px;
+    cursor: pointer;
+    line-height: 1.4;
+  }
+  .navbtn:hover:not(:disabled) { border-color: var(--ink-3); color: var(--ink); }
+  .navbtn:disabled { opacity: .34; cursor: not-allowed; }
+
+  /* ---------- the week ---------- */
+
+  .gridscroll { overflow-x: auto; padding-bottom: 4px; }
+
+  .week {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(112px, 1fr));
+    gap: 1px;
+    background: var(--line-soft);
+    border: 1px solid var(--line-soft);
+    min-width: 800px;
+  }
+
+  .day {
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    min-height: 250px;
+  }
+
+  .day-head {
+    padding: 9px 10px 8px;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .day-name {
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+  body[dir="rtl"] .day-name { letter-spacing: 0; font-family: var(--f-ar); font-size: 12px; }
+
+  .day-date {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .day.today .day-head { background: var(--surface-2); }
+  .day.today .day-date { color: var(--accent); font-weight: 600; }
+
+  .slots {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px;
+  }
+
+  /* the laminate: each open slot is a ply laid on the day */
+  .slot {
+    font-family: var(--f-mono);
+    font-size: 12.5px;
+    font-variant-numeric: tabular-nums;
+    text-align: start;
+    background: var(--open-bg);
+    color: var(--open);
+    border: 1px solid var(--open-line);
+    border-inline-start: 3px solid var(--open);
+    border-radius: 2px;
+    padding: 6px 8px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    transition: background .12s, border-color .12s, transform .12s;
+  }
+  .slot:hover { background: var(--surface-2); border-color: var(--ink-3); border-inline-start-color: var(--accent); }
+
+  .slot[aria-pressed="true"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    border-inline-start-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .slot .local { font-size: 10.5px; opacity: .78; }
+
+  /* Taken: the time is shown, never what it is. FreeBusy carries no detail to show. */
+  .slot.taken {
+    background: transparent;
+    color: var(--closed);
+    border-color: var(--line);
+    border-inline-start-color: var(--closed);
+    cursor: not-allowed;
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+  }
+  .slot.taken:hover { background: transparent; border-color: var(--line); border-inline-start-color: var(--closed); }
+  .slot.taken .local { text-decoration: none; opacity: .9; }
+
+  .closed {
+    flex: 1;
+    margin: 8px;
+    border: 1px dashed var(--line);
+    background: repeating-linear-gradient(135deg, transparent 0 5px, var(--line-soft) 5px 6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 8px;
+    text-align: center;
+  }
+
+  .closed span {
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--closed);
+    line-height: 1.5;
+  }
+  body[dir="rtl"] .closed span { letter-spacing: 0; font-family: var(--f-ar); font-size: 13px; text-transform: none; }
+
+  .none {
+    padding: 14px 10px;
+    font-size: 12px;
+    color: var(--ink-3);
+    line-height: 1.5;
+  }
+
+  /* ---------- booking ---------- */
+
+  .booking {
+    margin-top: 28px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .booking[hidden] { display: none; }
+
+  .booking-head {
+    padding: 16px 20px;
+    background: var(--ink);
+    color: var(--bg);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 32px;
+    align-items: baseline;
+  }
+
+  .bh-item { display: flex; flex-direction: column; gap: 2px; }
+
+  .bh-label {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    opacity: .6;
+  }
+  body[dir="rtl"] .bh-label { letter-spacing: 0; font-family: var(--f-ar); font-size: 12px; }
+
+  .bh-value {
+    font-family: var(--f-mono);
+    font-size: 15px;
+    font-variant-numeric: tabular-nums;
+  }
+  .bh-value.accent { color: var(--accent-2); }
+
+  .booking-body {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 15px;
+  }
+
+  .full { grid-column: 1 / -1; }
+
+  textarea { resize: vertical; min-height: 74px; }
+
+  .actions {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    align-items: center;
+    padding-top: 4px;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 14px;
+    border-radius: var(--r);
+    padding: 10px 18px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: opacity .14s, border-color .14s;
+  }
+
+  .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); font-weight: 600; }
+  .btn-primary:hover { opacity: .88; }
+
+  .btn-ghost { background: transparent; color: var(--ink-2); border-color: var(--line); }
+  .btn-ghost:hover { border-color: var(--ink-3); color: var(--ink); }
+
+  .note {
+    font-size: 12.5px;
+    color: var(--ink-3);
+    margin: 0;
+  }
+
+  .toast {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--open);
+  }
+
+  /* ---------- footer rules ---------- */
+
+  .rules {
+    margin-top: 40px;
+    padding-top: 22px;
+    border-top: 1px solid var(--line);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 26px;
+  }
+
+  .rule h3 {
+    margin: 0 0 7px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 500;
+  }
+  body[dir="rtl"] .rule h3 { letter-spacing: 0; font-family: var(--f-ar); font-size: 12.5px; }
+
+  .rule p { margin: 0; font-size: 13.5px; color: var(--ink-2); line-height: 1.6; }
+  .rule .mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  @media (max-width: 620px) {
+    .wrap { padding: 20px 15px 48px; }
+    .mast { align-items: flex-start; }
+    .clock { align-items: flex-start; }
+    body[dir="rtl"] .clock { align-items: flex-end; }
+  }
+</style>
+
+<script id="ni-busy-data">
+/* Busy blocks read from Ahmed's Google Calendar. START AND END ONLY — no titles,
+   no guests, no notes. Events he marks Free in Calendar are excluded, because he
+   is not actually busy then. Refresh by re-reading the calendar and replacing
+   this array; nothing else in the page changes. */
+window.NI_SYNCED = "2026-08-12";
+window.NI_BUSY = [
+  { "start": "2026-08-13T07:00:00+03:00", "end": "2026-08-13T07:30:00+03:00" },
+  { "start": "2026-08-16T08:30:00+03:00", "end": "2026-08-16T09:00:00+03:00" },
+  { "start": "2026-08-16T10:00:00+03:00", "end": "2026-08-16T10:45:00+03:00" },
+  { "start": "2026-08-19T08:00:00+03:00", "end": "2026-08-19T09:00:00+03:00" },
+  { "start": "2026-08-20T07:00:00+03:00", "end": "2026-08-20T07:30:00+03:00" },
+  { "start": "2026-08-23T08:30:00+03:00", "end": "2026-08-23T09:00:00+03:00" },
+  { "start": "2026-08-27T07:00:00+03:00", "end": "2026-08-27T07:30:00+03:00" },
+  { "start": "2026-08-30T08:30:00+03:00", "end": "2026-08-30T09:00:00+03:00" },
+  { "start": "2026-09-03T07:00:00+03:00", "end": "2026-09-03T07:30:00+03:00" },
+  { "start": "2026-09-06T08:30:00+03:00", "end": "2026-09-06T09:00:00+03:00" },
+  { "start": "2026-09-10T07:00:00+03:00", "end": "2026-09-10T07:30:00+03:00" },
+  { "start": "2026-09-13T08:30:00+03:00", "end": "2026-09-13T09:00:00+03:00" },
+  { "start": "2026-09-17T07:00:00+03:00", "end": "2026-09-17T07:30:00+03:00" }
+];
+</script>
+
+<div class="wrap">
+
+  <header class="mast">
+    <div class="mast-id">
+      <div class="eyebrow" data-t="eyebrow">Nile Industries · FRP / GRP</div>
+      <h1 data-t="h1">Book a meeting with Ahmed Abbas</h1>
+      <div class="mast-sub" data-t="sub">Pick a time that works for you. Times below are shown in Cairo and in your own timezone.</div>
+      <div class="synced" id="synced"></div>
+    </div>
+    <div class="clock">
+      <div class="clock-time" id="clock">--:--</div>
+      <div class="clock-label" id="clockLabel">Cairo now</div>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="field field-grow">
+      <span class="lbl" data-t="lblType">What is the meeting about</span>
+      <div class="types" id="types" role="group"></div>
+    </div>
+    <button class="lang" id="lang" type="button">العربية</button>
+  </div>
+
+  <div class="weeknav">
+    <div class="weeklabel" id="weekLabel"></div>
+    <div class="navbtns">
+      <button class="navbtn" id="prev" type="button">‹</button>
+      <button class="navbtn" id="today" type="button" data-t="btnToday">Earliest</button>
+      <button class="navbtn" id="next" type="button">›</button>
+    </div>
+  </div>
+
+  <div class="gridscroll">
+    <div class="week" id="week"></div>
+  </div>
+
+  <section class="booking" id="booking" hidden>
+    <div class="booking-head">
+      <div class="bh-item">
+        <span class="bh-label" data-t="bhWhen">Cairo time</span>
+        <span class="bh-value" id="bhCairo"></span>
+      </div>
+      <div class="bh-item">
+        <span class="bh-label" data-t="bhType">Meeting</span>
+        <span class="bh-value accent" id="bhType"></span>
+      </div>
+    </div>
+
+    <div class="booking-body">
+      <div class="field full">
+        <label class="lbl" for="fAttend" data-t="fAttend">Who is coming</label>
+        <input id="fAttend" type="text" autocomplete="off">
+      </div>
+      <div class="field full">
+        <label class="lbl" for="fTopic" data-t="fTopic">Points to discuss</label>
+        <textarea id="fTopic" placeholder=""></textarea>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="send" type="button" data-t="btnSend">Send request by email</button>
+        <button class="btn btn-ghost" id="copy" type="button" data-t="btnCopy">Copy for WhatsApp</button>
+        <span class="toast" id="toast"></span>
+      </div>
+      <p class="note full" data-t="confirmNote">Ahmed confirms the slot when he replies — usually the same working day.</p>
+    </div>
+  </section>
+
+  <section class="rules">
+    <div class="rule">
+      <h3 data-t="rHoursH">Standing hours</h3>
+      <p><span class="mono">09:30 – 16:30</span> <span data-t="rHoursTz">Cairo</span>, <span data-t="rHoursDays">Saturday to Thursday</span>. <span data-t="rHoursFri">Friday closed.</span></p>
+    </div>
+    <div class="rule">
+      <h3 data-t="rBreakH">Held daily</h3>
+      <p><span class="mono">13:00 – 14:00</span> <span data-t="rBreakBody">is never bookable. Mornings before 09:30 are reserved for the factory.</span></p>
+    </div>
+    <div class="rule">
+      <h3 data-t="rNoticeH">Notice</h3>
+      <p data-t="rNoticeBody">Calls need one working day. A factory visit needs three, so the plant and the technical office can prepare.</p>
+    </div>
+    <div class="rule">
+      <h3 data-t="rClosedH">Closed days</h3>
+      <p data-t="rClosedBody">Fridays, and Egyptian public holidays. The next one is Mawlid on 25 August 2026.</p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var CAIRO = "Africa/Cairo";
+  var EMAIL = "a.abbas@nileindustries.com";
+
+  // Busy blocks from Google Calendar, injected by the n8n host as window.NI_BUSY.
+  // Start/end ONLY — the FreeBusy API carries no titles, attendees or descriptions,
+  // so there is nothing here to leak. Empty when the page is served standalone.
+  var BUSY = [];
+  function loadBusy() {
+    var raw = (typeof window !== "undefined" && window.NI_BUSY) || [];
+    BUSY = [];
+    for (var i = 0; i < raw.length; i++) {
+      var s = Date.parse(raw[i].start), e = Date.parse(raw[i].end);
+      if (!isNaN(s) && !isNaN(e) && e > s) BUSY.push({ s: s, e: e });
+    }
+  }
+  loadBusy();
+
+  // One file, two homes. Served from n8n both endpoints are same-origin, so the
+  // page reads live busy times and posts bookings. Anywhere else the API stays
+  // empty: rules-only availability and a mailto fallback, no failed requests.
+  var API = (function () {
+    if (typeof window === "undefined") return "";
+    if (window.NI_API) return window.NI_API;
+    var host = (window.location && window.location.hostname) || "";
+    return /n8n\.cloud$/.test(host) ? "/webhook/ni-book" : "";
+  })();
+  var BOOK_URL = API;
+
+  var DAY_START = 9 * 60 + 30;   // 09:30 Cairo
+  var DAY_END   = 16 * 60 + 30;  // 16:30 Cairo
+  var BREAK_A   = 13 * 60;       // 13:00
+  var BREAK_B   = 14 * 60;       // 14:00
+  var STEP      = 30;            // slot granularity, minutes
+  var HORIZON_WEEKS = 3;
+
+  // Egyptian public holidays that fall inside the booking horizon.
+  var HOLIDAYS = { "2026-08-25": { en: "Mawlid — public holiday", ar: "المولد النبوي — إجازة رسمية" } };
+
+  var TYPES = [
+    { id: "call",    mins: 20, notice: 1, en: "Quick call",          ar: "مكالمة سريعة" },
+    { id: "commercial", mins: 45, notice: 1, en: "Commercial / RFQ",  ar: "تجاري / طلب عرض سعر" },
+    { id: "technical",  mins: 45, notice: 1, en: "Technical review",  ar: "مراجعة فنية" },
+    { id: "internal",   mins: 30, notice: 1, en: "Team one-to-one",   ar: "اجتماع فردي للفريق" },
+    { id: "visit",      mins: 90, notice: 3, en: "Factory visit",     ar: "زيارة المصنع" }
+  ];
+
+  var T = {
+    en: {
+      eyebrow: "Nile Industries · FRP / GRP",
+      h1: "Book a meeting with Ahmed",
+      sub: "Pick an open time, say who is coming and what you need to decide.",
+      lblType: "What is the meeting about",
+      btnToday: "Earliest",
+      bhWhen: "Cairo time",
+      bhType: "Meeting",
+      fAttend: "Who is coming", fTopic: "Points to discuss",
+      attendPlaceholder: "Names of everyone attending",
+      topicPlaceholder: "One line per point. What do you need decided or approved?",
+      btnSend: "Send request by email", btnBook: "Request this slot", btnCopy: "Copy for WhatsApp",
+      confirmNote: "Ahmed confirms the slot when he replies — usually the same working day.",
+      clockLabel: "Cairo now",
+      syncedOn: "Calendar read {d}",
+      friday: "Friday\nweekend",
+      past: "Past",
+      taken: "Booked",
+      noSlots: "No slots left for this meeting length.",
+      notice: "Needs more notice",
+      sending: "Sending…",
+      booked: "Request sent. Ahmed confirms by reply.",
+      bookFail: "That did not go through. Use «Copy for WhatsApp» and send it to him directly.",
+      slotGone: "Someone just took that slot. Pick another.",
+      needAttend: "Add who is coming.",
+      needTopic: "Add at least one point to discuss.",
+      rHoursH: "Standing hours", rHoursTz: "Cairo", rHoursDays: "Saturday to Thursday", rHoursFri: "Friday closed.",
+      rBreakH: "Held daily", rBreakBody: "is never bookable. Mornings before 09:30 are reserved for the factory.",
+      rNoticeH: "Notice", rNoticeBody: "Calls need one working day. A factory visit needs three, so the plant and the technical office can prepare.",
+      rClosedH: "Closed days", rClosedBody: "Fridays, and Egyptian public holidays. The next one is Mawlid on 25 August 2026.",
+      copied: "Copied — paste it into WhatsApp.",
+      copyFail: "Select the text and copy it manually.",
+      lang: "العربية",
+      reqTitle: "Meeting request",
+      rWhen: "Requested time", rType: "Meeting",
+      rAttend: "Attending", rTopic: "Points",
+      rSentFrom: "Sent from Ahmed's booking page",
+      locale: "en-GB"
+    },
+    ar: {
+      eyebrow: "نايل إندستريز · فايبر جلاس",
+      h1: "احجز اجتماعاً مع أحمد",
+      sub: "اختر وقتاً متاحاً، واكتب مَن سيحضر وما المطلوب حسمه.",
+      lblType: "موضوع الاجتماع",
+      btnToday: "أقرب موعد",
+      bhWhen: "توقيت القاهرة",
+      bhType: "نوع الاجتماع",
+      fAttend: "مَن سيحضر", fTopic: "النقاط المطلوب مناقشتها",
+      attendPlaceholder: "أسماء كل الحاضرين",
+      topicPlaceholder: "نقطة في كل سطر. ما الذي تريد قراراً أو اعتماداً فيه؟",
+      btnSend: "أرسل الطلب بالبريد", btnBook: "اطلب هذا الموعد", btnCopy: "انسخ للواتساب",
+      confirmNote: "أحمد يؤكد الموعد عند الرد — عادةً في نفس يوم العمل.",
+      clockLabel: "القاهرة الآن",
+      syncedOn: "التقويم مقروء في {d}",
+      friday: "الجمعة\nعطلة",
+      past: "مضى",
+      taken: "محجوز",
+      noSlots: "لا توجد مواعيد متاحة بهذه المدة.",
+      notice: "يحتاج مهلة أطول",
+      sending: "جارٍ الإرسال…",
+      booked: "تم إرسال الطلب. أحمد يؤكد بالرد.",
+      bookFail: "لم يتم الإرسال. استخدم «انسخ للواتساب» وأرسله له مباشرة.",
+      slotGone: "شخص آخر حجز هذا الموعد للتو. اختر غيره.",
+      needAttend: "اكتب مَن سيحضر.",
+      needTopic: "اكتب نقطة واحدة على الأقل للمناقشة.",
+      rHoursH: "مواعيد العمل", rHoursTz: "بتوقيت القاهرة", rHoursDays: "من السبت إلى الخميس", rHoursFri: "الجمعة إجازة.",
+      rBreakH: "محجوز يومياً", rBreakBody: "غير متاح للحجز. والصباح قبل ٩:٣٠ مخصص للمصنع.",
+      rNoticeH: "المهلة", rNoticeBody: "المكالمات تحتاج يوم عمل واحد. وزيارة المصنع تحتاج ثلاثة أيام حتى يجهّز المصنع والمكتب الفني.",
+      rClosedH: "أيام الإغلاق", rClosedBody: "الجمعة، والإجازات الرسمية المصرية. أقربها المولد النبوي في ٢٥ أغسطس ٢٠٢٦.",
+      copied: "تم النسخ — الصقه في الواتساب.",
+      copyFail: "حدد النص وانسخه يدوياً.",
+      lang: "English",
+      reqTitle: "طلب اجتماع",
+      rWhen: "الموعد المطلوب", rType: "نوع الاجتماع",
+      rAttend: "الحاضرون", rTopic: "النقاط",
+      rSentFrom: "مُرسل من صفحة حجز مواعيد أحمد",
+      locale: "ar-EG"
+    }
+  };
+
+  var lang = "en";
+  var tz = CAIRO;
+  var typeId = "call";
+  var weekOffset = 0;
+  var selected = null;
+
+  /* ---------- time helpers ---------- */
+
+  function offsetMinutes(instant, zone) {
+    var parts = new Intl.DateTimeFormat("en-US", { timeZone: zone, timeZoneName: "longOffset" }).formatToParts(instant);
+    var name = "";
+    for (var i = 0; i < parts.length; i++) if (parts[i].type === "timeZoneName") name = parts[i].value;
+    var m = /GMT([+-])(\d{1,2})(?::(\d{2}))?/.exec(name);
+    if (!m) return 0;
+    return (m[1] === "-" ? -1 : 1) * (parseInt(m[2], 10) * 60 + (m[3] ? parseInt(m[3], 10) : 0));
+  }
+
+  // Build the instant for a given Cairo wall-clock date and minute-of-day.
+  function cairoInstant(y, mo, d, minutes) {
+    var guess = new Date(Date.UTC(y, mo, d, 0, minutes) - 180 * 60000);
+    var off = offsetMinutes(guess, CAIRO);
+    return new Date(Date.UTC(y, mo, d, 0, minutes) - off * 60000);
+  }
+
+  // Today's civil date in Cairo, as {y, mo, d}.
+  function cairoToday() {
+    var p = new Intl.DateTimeFormat("en-CA", { timeZone: CAIRO, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    var b = p.split("-");
+    return { y: +b[0], mo: +b[1] - 1, d: +b[2] };
+  }
+
+  function addDays(c, n) {
+    var t = new Date(Date.UTC(c.y, c.mo, c.d + n));
+    return { y: t.getUTCFullYear(), mo: t.getUTCMonth(), d: t.getUTCDate() };
+  }
+
+  function weekdayOf(c) { return new Date(Date.UTC(c.y, c.mo, c.d)).getUTCDay(); } // 0 Sun … 5 Fri … 6 Sat
+
+  function isoOf(c) {
+    return c.y + "-" + String(c.mo + 1).padStart(2, "0") + "-" + String(c.d).padStart(2, "0");
+  }
+
+  function fmt(instant, zone, opts) {
+    var o = { timeZone: zone };
+    for (var k in opts) o[k] = opts[k];
+    return new Intl.DateTimeFormat(T[lang].locale, o).format(instant);
+  }
+
+  function hhmm(instant, zone) { return fmt(instant, zone, { hour: "2-digit", minute: "2-digit", hour12: false }); }
+
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function minToClock(m) { return pad(Math.floor(m / 60)) + ":" + pad(m % 60); }
+
+  /* ---------- availability ---------- */
+
+  function currentType() {
+    for (var i = 0; i < TYPES.length; i++) if (TYPES[i].id === typeId) return TYPES[i];
+    return TYPES[0];
+  }
+
+  // Earliest civil date that satisfies the notice, counting working days only.
+  function earliestDate(noticeDays) {
+    var c = cairoToday();
+    var counted = 0;
+    while (counted < noticeDays) {
+      c = addDays(c, 1);
+      if (weekdayOf(c) !== 5 && !HOLIDAYS[isoOf(c)]) counted++;
+    }
+    return c;
+  }
+
+  function compare(a, b) {
+    if (a.y !== b.y) return a.y - b.y;
+    if (a.mo !== b.mo) return a.mo - b.mo;
+    return a.d - b.d;
+  }
+
+  function slotsFor(c) {
+    var type = currentType();
+    var out = [];
+    var earliest = earliestDate(type.notice);
+    if (compare(c, earliest) < 0) return { blocked: "notice", list: out };
+
+    for (var start = DAY_START; start + type.mins <= DAY_END; start += STEP) {
+      var end = start + type.mins;
+      // never straddle or sit inside the held midday hour
+      if (start < BREAK_B && end > BREAK_A) continue;
+      var at = cairoInstant(c.y, c.mo, c.d, start);
+      out.push({ start: start, end: end, instant: at, busy: overlapsBusy(at, type.mins) });
+    }
+    return { blocked: null, list: out };
+  }
+
+  function overlapsBusy(instant, mins) {
+    var s = instant.getTime(), e = s + mins * 60000;
+    for (var i = 0; i < BUSY.length; i++) {
+      if (s < BUSY[i].e && e > BUSY[i].s) return true;
+    }
+    return false;
+  }
+
+  // Which rendered week contains a given civil date (0 = the week on screen at load).
+  function baseWeekStart() {
+    var c = cairoToday();
+    return addDays(c, -((weekdayOf(c) + 1) % 7));   // Saturday opens the Egyptian week
+  }
+
+  function weekIndexOf(target) {
+    var base = baseWeekStart();
+    var ms = Date.UTC(target.y, target.mo, target.d) - Date.UTC(base.y, base.mo, base.d);
+    return Math.floor(ms / (7 * 86400000));
+  }
+
+  // A longer meeting can push past every day on screen; move forward to where it fits.
+  function jumpToFirstAvailable() {
+    var idx = weekIndexOf(earliestDate(currentType().notice));
+    if (idx > weekOffset) weekOffset = Math.min(idx, HORIZON_WEEKS);
+  }
+
+  /* ---------- render ---------- */
+
+  function renderTypes() {
+    var host = document.getElementById("types");
+    host.innerHTML = "";
+    TYPES.forEach(function (t) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "type";
+      b.setAttribute("aria-pressed", String(t.id === typeId));
+      b.innerHTML = "";
+      var span = document.createElement("span");
+      span.textContent = t[lang];
+      var mins = document.createElement("span");
+      mins.className = "mins";
+      mins.textContent = t.mins + "m";
+      b.appendChild(span);
+      b.appendChild(mins);
+      b.addEventListener("click", function () {
+        typeId = t.id;
+        selected = null;
+        document.getElementById("booking").hidden = true;
+        jumpToFirstAvailable();
+        renderTypes();
+        renderWeek();
+      });
+      host.appendChild(b);
+    });
+  }
+
+  function weekStart() { return addDays(baseWeekStart(), weekOffset * 7); }
+
+  function renderWeek() {
+    var host = document.getElementById("week");
+    host.innerHTML = "";
+    var start = weekStart();
+    var today = cairoToday();
+    var t = T[lang];
+
+    var first = cairoInstant(start.y, start.mo, start.d, 12);
+    var lastC = addDays(start, 6);
+    var last = cairoInstant(lastC.y, lastC.mo, lastC.d, 12);
+    document.getElementById("weekLabel").textContent =
+      fmt(first, CAIRO, { day: "numeric", month: "short" }) + " – " + fmt(last, CAIRO, { day: "numeric", month: "short", year: "numeric" });
+
+    document.getElementById("prev").disabled = weekOffset <= 0;
+    document.getElementById("next").disabled = weekOffset >= HORIZON_WEEKS;
+
+    for (var i = 0; i < 7; i++) {
+      var c = addDays(start, i);
+      var col = document.createElement("div");
+      col.className = "day";
+      if (compare(c, today) === 0) col.className += " today";
+
+      var noon = cairoInstant(c.y, c.mo, c.d, 12);
+      var head = document.createElement("div");
+      head.className = "day-head";
+      var nm = document.createElement("div");
+      nm.className = "day-name";
+      nm.textContent = fmt(noon, CAIRO, { weekday: "short" });
+      var dt = document.createElement("div");
+      dt.className = "day-date";
+      dt.textContent = fmt(noon, CAIRO, { day: "2-digit", month: "2-digit" });
+      head.appendChild(nm);
+      head.appendChild(dt);
+      col.appendChild(head);
+
+      var iso = isoOf(c);
+      var wd = weekdayOf(c);
+      var holiday = HOLIDAYS[iso];
+
+      if (wd === 5 || holiday) {
+        var closed = document.createElement("div");
+        closed.className = "closed";
+        var s = document.createElement("span");
+        s.style.whiteSpace = "pre-line";
+        s.textContent = holiday ? holiday[lang] : t.friday;
+        closed.appendChild(s);
+        col.appendChild(closed);
+      } else if (compare(c, today) < 0) {
+        var pastEl = document.createElement("div");
+        pastEl.className = "closed";
+        var ps = document.createElement("span");
+        ps.textContent = t.past;
+        pastEl.appendChild(ps);
+        col.appendChild(pastEl);
+      } else {
+        var res = slotsFor(c);
+        if (res.blocked === "notice") {
+          var nb = document.createElement("div");
+          nb.className = "closed";
+          var ns = document.createElement("span");
+          ns.textContent = t.notice;
+          nb.appendChild(ns);
+          col.appendChild(nb);
+        } else if (!res.list.length) {
+          var no = document.createElement("div");
+          no.className = "none";
+          no.textContent = t.noSlots;
+          col.appendChild(no);
+        } else {
+          var box = document.createElement("div");
+          box.className = "slots";
+          res.list.forEach(function (sl) {
+            var b = document.createElement("button");
+            b.type = "button";
+
+            var top = document.createElement("span");
+            top.textContent = minToClock(sl.start);
+            b.appendChild(top);
+
+            if (sl.busy) {
+              b.className = "slot taken";
+              b.disabled = true;
+              var tk = document.createElement("span");
+              tk.className = "local";
+              tk.textContent = t.taken;
+              b.appendChild(tk);
+              box.appendChild(b);
+              return;
+            }
+
+            b.className = "slot";
+            b.setAttribute("aria-pressed", String(!!selected && selected.instant.getTime() === sl.instant.getTime()));
+
+            if (tz !== CAIRO) {
+              var lo = document.createElement("span");
+              lo.className = "local";
+              lo.textContent = hhmm(sl.instant, tz);
+              b.appendChild(lo);
+            }
+
+            b.addEventListener("click", function () {
+              selected = sl;
+              renderWeek();
+              openBooking();
+            });
+            box.appendChild(b);
+          });
+          col.appendChild(box);
+        }
+      }
+      host.appendChild(col);
+    }
+  }
+
+  function openBooking() {
+    if (!selected) return;
+    var t = T[lang];
+    var type = currentType();
+    var box = document.getElementById("booking");
+    box.hidden = false;
+
+    document.getElementById("bhCairo").textContent =
+      fmt(selected.instant, CAIRO, { weekday: "short", day: "numeric", month: "short" }) + "  " + minToClock(selected.start);
+
+    document.getElementById("bhType").textContent = type[lang] + " · " + type.mins + "m";
+    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  /* ---------- request text ---------- */
+
+  function requestText() {
+    var t = T[lang];
+    var type = currentType();
+    var v = function (id) { return document.getElementById(id).value.trim(); };
+    var lines = [];
+    lines.push(t.reqTitle);
+    lines.push("");
+    lines.push(t.rWhen + ": " + fmt(selected.instant, CAIRO, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " — " + minToClock(selected.start));
+    lines.push(t.rType + ": " + type[lang] + " (" + type.mins + " min)");
+    lines.push(t.rAttend + ": " + v("fAttend"));
+    lines.push("");
+    lines.push(t.rTopic + ":");
+    v("fTopic").split("\n").forEach(function (line) {
+      if (line.trim()) lines.push("  - " + line.trim());
+    });
+    lines.push("");
+    lines.push("— " + t.rSentFrom);
+    return lines.join("\n");
+  }
+
+  function subjectLine() {
+    var type = currentType();
+    var who = document.getElementById("fAttend").value.trim();
+    return T[lang].reqTitle + " — " + type[lang] + " — " + fmt(selected.instant, CAIRO, { day: "numeric", month: "short" }) + " " + minToClock(selected.start) + (who ? " — " + who : "");
+  }
+
+  function toast(msg) {
+    var el = document.getElementById("toast");
+    el.textContent = msg;
+    window.setTimeout(function () { if (el.textContent === msg) el.textContent = ""; }, 4000);
+  }
+
+  /* ---------- language ---------- */
+
+  function applyLang() {
+    var t = T[lang];
+    document.body.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+    document.body.setAttribute("lang", lang === "ar" ? "ar" : "en");
+
+    var nodes = document.querySelectorAll("[data-t]");
+    for (var i = 0; i < nodes.length; i++) {
+      var key = nodes[i].getAttribute("data-t");
+      if (t[key]) nodes[i].textContent = t[key];
+    }
+    var stamp = (typeof window !== "undefined" && window.NI_SYNCED) || "";
+    var syncedEl = document.getElementById("synced");
+    if (stamp && BUSY.length) {
+      var when = new Date(stamp + "T12:00:00+03:00");
+      syncedEl.textContent = t.syncedOn.replace("{d}",
+        isNaN(when) ? stamp : fmt(when, CAIRO, { day: "numeric", month: "long", year: "numeric" }));
+    } else {
+      syncedEl.textContent = "";
+    }
+
+    if (BOOK_URL) document.getElementById("send").textContent = t.btnBook;
+    document.getElementById("lang").textContent = t.lang;
+    document.getElementById("clockLabel").textContent = t.clockLabel;
+    document.getElementById("fTopic").placeholder = t.topicPlaceholder;
+    document.getElementById("fAttend").placeholder = t.attendPlaceholder;
+    document.title = lang === "ar" ? "احجز اجتماعاً — أحمد عباس، نايل إندستريز" : "Book a meeting — Ahmed Abbas, Nile Industries";
+  }
+
+  /* ---------- boot ---------- */
+
+  function tickClock() {
+    document.getElementById("clock").textContent = hhmm(new Date(), CAIRO);
+  }
+
+  document.getElementById("prev").addEventListener("click", function () {
+    if (weekOffset > 0) { weekOffset--; selected = null; document.getElementById("booking").hidden = true; renderWeek(); }
+  });
+  document.getElementById("next").addEventListener("click", function () {
+    if (weekOffset < HORIZON_WEEKS) { weekOffset++; selected = null; document.getElementById("booking").hidden = true; renderWeek(); }
+  });
+  document.getElementById("today").addEventListener("click", function () {
+    weekOffset = 0;
+    jumpToFirstAvailable();
+    selected = null;
+    document.getElementById("booking").hidden = true;
+    renderWeek();
+  });
+
+  document.getElementById("lang").addEventListener("click", function () {
+    lang = lang === "en" ? "ar" : "en";
+    applyLang();
+    renderTypes();
+    renderWeek();
+    if (selected) openBooking();
+  });
+
+  document.getElementById("send").addEventListener("click", function () {
+    if (!selected) return;
+    var t = T[lang];
+    if (!document.getElementById("fAttend").value.trim()) { toast(t.needAttend); document.getElementById("fAttend").focus(); return; }
+    if (!document.getElementById("fTopic").value.trim()) { toast(t.needTopic); document.getElementById("fTopic").focus(); return; }
+
+    if (!BOOK_URL) {
+      window.location.href = "mailto:" + EMAIL + "?subject=" + encodeURIComponent(subjectLine()) + "&body=" + encodeURIComponent(requestText());
+      return;
+    }
+
+    var btn = this;
+    var type = currentType();
+    var v = function (id) { return document.getElementById(id).value.trim(); };
+    btn.disabled = true;
+    toast(t.sending);
+
+    fetch(BOOK_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        startIso: selected.instant.toISOString(),
+        minutes: type.mins,
+        typeId: type.id,
+        typeLabel: type.en,
+        attending: v("fAttend"),
+        topic: v("fTopic"),
+        lang: lang
+      })
+    }).then(function (r) {
+      return r.json().then(function (d) { return { ok: r.ok, status: r.status, data: d }; },
+                           function () { return { ok: r.ok, status: r.status, data: {} }; });
+    }).then(function (res) {
+      if (res.ok && res.data && res.data.ok) {
+        document.getElementById("booking").hidden = true;
+        selected = null;
+        if (res.data.busy) { window.NI_BUSY = res.data.busy; loadBusy(); }
+        toast(t.booked);
+        renderWeek();
+      } else if (res.status === 409) {
+        if (res.data && res.data.busy) { window.NI_BUSY = res.data.busy; loadBusy(); }
+        toast(t.slotGone);
+        renderWeek();
+      } else {
+        toast(t.bookFail);
+      }
+      btn.disabled = false;
+    }).catch(function () {
+      toast(t.bookFail);
+      btn.disabled = false;
+    });
+  });
+
+  document.getElementById("copy").addEventListener("click", function () {
+    if (!selected) return;
+    var text = requestText();
+    var done = function () { toast(T[lang].copied); };
+    var fail = function () { toast(T[lang].copyFail); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, fail);
+    } else {
+      try {
+        var ta = document.createElement("textarea");
+        ta.value = text;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        done();
+      } catch (e) { fail(); }
+    }
+  });
+
+  function refreshBusy() {
+    if (!API || typeof fetch !== "function") return;
+    fetch(API, { headers: { Accept: "application/json" } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.busy) { window.NI_BUSY = d.busy; loadBusy(); renderWeek(); }
+      })
+      .catch(function () { /* rules-only availability still stands */ });
+  }
+
+  applyLang();
+  renderTypes();
+  jumpToFirstAvailable();
+  renderWeek();
+  refreshBusy();
+  tickClock();
+  window.setInterval(tickClock, 15000);
+})();
+</script>

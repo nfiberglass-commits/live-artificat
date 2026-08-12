@@ -1,0 +1,12 @@
+# The abandoned n8n build. Kept locally, deliberately NOT published: it embeds
+# the approve/decline shared key, and this repository is public.
+build-n8n.js
+ni-booking-workflow.js
+check-generated.js
+
+# Generated only for the n8n hosting route that was dropped.
+ni-booking-page.min.html
+
+node_modules/
+.DS_Store
+Thumbs.db
