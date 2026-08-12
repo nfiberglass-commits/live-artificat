@@ -9,10 +9,19 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
-    // The magic link comes back as a hash fragment; let the client consume it
-    // and then we clean the address bar ourselves.
+
+    // Let the client consume the sign-in link from the address bar. Nothing may
+    // clear the URL before this has run, or the code is destroyed unused.
     detectSessionInUrl: true,
-    flowType: "pkce"
+
+    // Deliberately NOT pkce. PKCE keeps its verifier in the localStorage of the
+    // browser that asked for the link, so a mail client that opens the link in a
+    // different browser - or its own in-app viewer, which Outlook does - can
+    // never complete the exchange. For an internal tool opened from whatever
+    // mail app someone happens to use, that fails constantly.
+    // The implicit flow returns the session in the URL fragment, which never
+    // reaches a server and works whichever browser opens it.
+    flowType: "implicit"
   },
   realtime: { params: { eventsPerSecond: 5 } }
 });

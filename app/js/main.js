@@ -108,7 +108,13 @@ $("copy").addEventListener("click", async () => {
 
 /* ---------- boot ---------- */
 
-tidyUrl();
+// Note whether we arrived on a sign-in link BEFORE anything touches the URL.
+// The Supabase client reads the code out of the address bar asynchronously, so
+// clearing it here would destroy the very thing it needs.
+const arrivedOnLink =
+  /[?&]code=/.test(window.location.search) ||
+  /access_token=|error=/.test(window.location.hash);
+
 applyLang();
 renderTypes();
 jumpToFirstAvailable();
@@ -124,6 +130,12 @@ onAuth(async (session) => {
     set({ loading: false });
     applyLang();
     redraw();
+    // Arriving on a link and still having no session means the exchange failed.
+    // Say so, instead of silently showing the sign-in card again.
+    if (arrivedOnLink) {
+      $("gateNote").textContent = t().gateLinkFailed;
+      tidyUrl();
+    }
     return;
   }
   tidyUrl();
