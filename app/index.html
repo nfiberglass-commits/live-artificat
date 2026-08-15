@@ -378,7 +378,9 @@
 
   .slot .local { font-size: 10.5px; opacity: .78; }
 
-  /* Taken: the time is shown, never what it is. FreeBusy carries no detail to show. */
+  /* Taken: the time is shown, never what it is. Free/busy carries no detail to show.
+     Laid out on ONE line so a booked chip is exactly as tall as a free one - otherwise
+     a day with bookings grows taller than the days beside it and the row loses its grid. */
   .slot.taken {
     background: transparent;
     color: var(--closed);
@@ -387,9 +389,21 @@
     cursor: not-allowed;
     text-decoration: line-through;
     text-decoration-thickness: 1px;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
   }
   .slot.taken:hover { background: transparent; border-color: var(--line); border-inline-start-color: var(--closed); }
-  .slot.taken .local { text-decoration: none; opacity: .9; }
+  .slot.taken .local {
+    text-decoration: none;
+    opacity: .9;
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  body[dir="rtl"] .slot.taken .local { font-size: 11px; letter-spacing: 0; text-transform: none; }
 
   .closed {
     flex: 1;
