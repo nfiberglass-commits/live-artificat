@@ -257,8 +257,9 @@ const GATE = `
     <p data-t="gateSub">Your employee code and the PIN you use on the HR panels.</p>
     <div id="gatePinBox">
       <div class="field">
-        <label class="lbl" for="gateCode" data-t="gateCode">Employee code</label>
-        <input id="gateCode" type="text" inputmode="numeric" autocomplete="username">
+        <label class="lbl" for="gateCode" id="gateCodeLabel" data-t="gateName">Your name</label>
+        <select id="gateCode"></select>
+        <input id="gateCodeManual" type="text" inputmode="numeric" autocomplete="off" name="ni-emp-code" hidden>
       </div>
       <div class="field">
         <label class="lbl" for="gatePin" data-t="gatePin">PIN</label>

@@ -7,7 +7,20 @@
 import { supabase } from "./supabase.js";
 import { set } from "./store.js";
 import { loadProfile } from "./data.js";
-import { PIN_LOGIN_URL } from "./config.js";
+import { PIN_LOGIN_URL, USERS_URL } from "./config.js";
+
+// The names shown in the sign-in dropdown. Anything unexpected in the response
+// is treated as "no list", so the card falls back to typing a code rather than
+// rendering junk.
+export async function fetchPeople() {
+  const res = await fetch(USERS_URL, { cache: "no-store" });
+  if (!res.ok) throw new Error("PEOPLE_FAILED");
+  const data = await res.json();
+  if (!data || !Array.isArray(data.people)) throw new Error("PEOPLE_FAILED");
+  return data.people
+    .filter((p) => p && String(p.code || "").trim() && String(p.name || "").trim())
+    .map((p) => ({ code: String(p.code).trim(), name: String(p.name).trim() }));
+}
 
 // Employee code + PIN, the same pair people already use on the HR panels.
 //

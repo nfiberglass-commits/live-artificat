@@ -2,7 +2,7 @@
 
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
-import { onAuth, sendLink, signInWithPassword, signInWithPin, signOut, tidyUrl } from "./auth.js";
+import { onAuth, sendLink, signInWithPassword, signInWithPin, fetchPeople, signOut, tidyUrl } from "./auth.js";
 import { loadBusy, loadMyRequests, loadPending, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
@@ -45,6 +45,41 @@ function showGate(which) {
 $("gateUseEmail").addEventListener("click", () => showGate("email"));
 $("gateUsePin").addEventListener("click", () => showGate("pin"));
 
+// People pick their name rather than remember a code. If the list cannot be
+// fetched the card must still work, so it falls back to typing the code - a
+// sign-in page that depends on a second request is a sign-in page that breaks
+// the first time that request does.
+function useCodeFallback() {
+  $("gateCode").hidden = true;
+  $("gateCodeManual").hidden = false;
+  $("gateCodeLabel").setAttribute("data-t", "gateCode");
+  $("gateCodeLabel").textContent = t().gateCode;
+}
+
+const enteredCode = () =>
+  $("gateCodeManual").hidden ? $("gateCode").value : $("gateCodeManual").value;
+
+(async () => {
+  try {
+    const people = await fetchPeople();
+    if (!people.length) return useCodeFallback();
+    const sel = $("gateCode");
+    const first = document.createElement("option");
+    first.value = "";
+    first.setAttribute("data-t", "gateChoose");
+    first.textContent = t().gateChoose;
+    sel.appendChild(first);
+    for (const p of people) {
+      const o = document.createElement("option");
+      o.value = p.code;
+      o.textContent = p.name;
+      sel.appendChild(o);
+    }
+  } catch {
+    useCodeFallback();
+  }
+})();
+
 $("gatePinIn").addEventListener("click", async () => {
   const tr = t();
   const btn = $("gatePinIn");
@@ -52,7 +87,7 @@ $("gatePinIn").addEventListener("click", async () => {
   btn.disabled = true;
   note.textContent = "";
   try {
-    await signInWithPin($("gateCode").value, $("gatePin").value);
+    await signInWithPin(enteredCode(), $("gatePin").value);
     $("gatePin").value = "";   // don't leave it sitting in the field
   } catch (err) {
     note.textContent =
@@ -67,7 +102,7 @@ $("gatePinIn").addEventListener("click", async () => {
 
 // Enter should submit, because this form is two short fields and nobody will
 // reach for the mouse.
-["gateCode", "gatePin"].forEach((id) => {
+["gateCode", "gateCodeManual", "gatePin"].forEach((id) => {
   $(id).addEventListener("keydown", (e) => {
     if (e.key === "Enter") $("gatePinIn").click();
   });
