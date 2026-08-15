@@ -254,17 +254,32 @@ const GATE = `
   <div class="gate-card">
     <div class="eyebrow" data-t="eyebrow">Nile Industries · FRP / GRP</div>
     <h2 data-t="gateTitle">Sign in</h2>
-    <p data-t="gateSub">Use your work email. We send a one-time link — there is no password to remember.</p>
-    <div class="field">
-      <label class="lbl" for="gateEmail" data-t="gateEmail">Work email</label>
-      <input id="gateEmail" type="email" autocomplete="email" inputmode="email">
+    <p data-t="gateSub">Your employee code and the PIN you use on the HR panels.</p>
+    <div id="gatePinBox">
+      <div class="field">
+        <label class="lbl" for="gateCode" data-t="gateCode">Employee code</label>
+        <input id="gateCode" type="text" inputmode="numeric" autocomplete="username">
+      </div>
+      <div class="field">
+        <label class="lbl" for="gatePin" data-t="gatePin">PIN</label>
+        <input id="gatePin" type="password" inputmode="numeric" autocomplete="current-password">
+      </div>
+      <button class="btn" id="gatePinIn" type="button" data-t="gateSignIn">Sign in</button>
+      <button class="linkish" id="gateUseEmail" type="button" data-t="gateUseEmail">Sign in with an email address instead</button>
     </div>
-    <div class="field">
-      <label class="lbl" for="gatePass" data-t="gatePass">Password</label>
-      <input id="gatePass" type="password" autocomplete="current-password">
+    <div id="gateEmailBox" hidden>
+      <div class="field">
+        <label class="lbl" for="gateEmail" data-t="gateEmail">Work email</label>
+        <input id="gateEmail" type="email" autocomplete="email" inputmode="email">
+      </div>
+      <div class="field">
+        <label class="lbl" for="gatePass" data-t="gatePass">Password</label>
+        <input id="gatePass" type="password" autocomplete="current-password">
+      </div>
+      <button class="btn" id="gateSignIn" type="button" data-t="gateSignIn">Sign in</button>
+      <button class="linkish" id="gateSend" type="button" data-t="gateSend">Email me a one-time link instead</button>
+      <button class="linkish" id="gateUsePin" type="button" data-t="gateUsePin">Use my employee code instead</button>
     </div>
-    <button class="btn" id="gateSignIn" type="button" data-t="gateSignIn">Sign in</button>
-    <button class="linkish" id="gateSend" type="button" data-t="gateSend">Email me a one-time link instead</button>
     <div class="gate-note" id="gateNote"></div>
   </div>
 </div>

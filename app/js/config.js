@@ -13,3 +13,9 @@ export const BUSY_WINDOW_DAYS = 35;
 
 // Shown on the sign-in card so people know who to chase if they cannot get in.
 export const SUPPORT_EMAIL = "a.abbas@nileindustries.com";
+
+// Employee code + PIN are checked against hr_panel_users by n8n, which then hands
+// back a real Supabase session. The service key stays on that server and never
+// reaches the browser, so this endpoint grants nothing on its own - a wrong PIN
+// gets a 401 and Row Level Security still decides what a valid session may read.
+export const PIN_LOGIN_URL = "https://nile-industries.app.n8n.cloud/webhook/ni-book-login";

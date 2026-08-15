@@ -2,7 +2,7 @@
 
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
-import { onAuth, sendLink, signInWithPassword, signOut, tidyUrl } from "./auth.js";
+import { onAuth, sendLink, signInWithPassword, signInWithPin, signOut, tidyUrl } from "./auth.js";
 import { loadBusy, loadMyRequests, loadPending, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
@@ -30,6 +30,48 @@ async function refreshAll() {
 }
 
 /* ---------- sign-in gate ---------- */
+
+// Employee code + PIN is the way in for the team; the email route stays for the
+// accounts that predate it. Swapping between them clears the note so a stale
+// error from one form is never read as a complaint about the other.
+function showGate(which) {
+  const pin = which === "pin";
+  $("gatePinBox").hidden = !pin;
+  $("gateEmailBox").hidden = pin;
+  $("gateNote").textContent = "";
+  (pin ? $("gateCode") : $("gateEmail")).focus();
+}
+
+$("gateUseEmail").addEventListener("click", () => showGate("email"));
+$("gateUsePin").addEventListener("click", () => showGate("pin"));
+
+$("gatePinIn").addEventListener("click", async () => {
+  const tr = t();
+  const btn = $("gatePinIn");
+  const note = $("gateNote");
+  btn.disabled = true;
+  note.textContent = "";
+  try {
+    await signInWithPin($("gateCode").value, $("gatePin").value);
+    $("gatePin").value = "";   // don't leave it sitting in the field
+  } catch (err) {
+    note.textContent =
+      err.missing ? tr.gatePinMissing :
+      err.badCredentials ? tr.gatePinWrong :
+      err.message === "PIN_UNREACHABLE" ? tr.gatePinDown :
+      tr.gateSignInFailed;
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+// Enter should submit, because this form is two short fields and nobody will
+// reach for the mouse.
+["gateCode", "gatePin"].forEach((id) => {
+  $(id).addEventListener("keydown", (e) => {
+    if (e.key === "Enter") $("gatePinIn").click();
+  });
+});
 
 $("gateSignIn").addEventListener("click", async () => {
   const tr = t();

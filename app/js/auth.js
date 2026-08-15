@@ -7,6 +7,55 @@
 import { supabase } from "./supabase.js";
 import { set } from "./store.js";
 import { loadProfile } from "./data.js";
+import { PIN_LOGIN_URL } from "./config.js";
+
+// Employee code + PIN, the same pair people already use on the HR panels.
+//
+// The PIN itself proves nothing to Postgres. n8n checks it against
+// hr_panel_users and returns a genuine Supabase session, so from here on the
+// database is still the thing enforcing every rule - this is a different way in,
+// not a way around. Identity is the employee code, never the email column:
+// several people share departmental mailboxes.
+export async function signInWithPin(code, pin) {
+  const c = String(code || "").trim();
+  const p = String(pin || "").trim();
+  if (!c || !p) {
+    const err = new Error("MISSING");
+    err.missing = true;
+    throw err;
+  }
+
+  let res;
+  try {
+    res = await fetch(PIN_LOGIN_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: c, pin: p })
+    });
+  } catch {
+    throw new Error("PIN_UNREACHABLE");
+  }
+
+  if (res.status === 401) {
+    const err = new Error("BAD_PIN");
+    err.badCredentials = true;
+    throw err;
+  }
+  if (!res.ok) throw new Error("PIN_LOGIN_FAILED");
+
+  const data = await res.json().catch(() => ({}));
+  if (!data.ok || !data.access_token || !data.refresh_token) {
+    const err = new Error("BAD_PIN");
+    err.badCredentials = true;
+    throw err;
+  }
+
+  const { error } = await supabase.auth.setSession({
+    access_token: data.access_token,
+    refresh_token: data.refresh_token
+  });
+  if (error) throw error;
+}
 
 // Accounts are created by Ahmed in the Supabase dashboard, so the page signs in
 // and never signs up. Nobody can create themselves an account from here.
@@ -52,16 +101,24 @@ export async function currentSession() {
 }
 
 // Fires once now and again on every future auth change.
+//
+// 🚨 The callback runs INSIDE the client's auth lock, and everything below it
+// (loadProfile, then the whole refresh) calls Supabase again - which waits for
+// that same lock. Awaiting here deadlocks: the session is stored, but
+// setSession() never resolves and the gate never closes. So the state is set
+// synchronously and the rest is handed to a fresh task, outside the lock.
 export function onAuth(handler) {
-  supabase.auth.onAuthStateChange(async (_event, session) => {
+  supabase.auth.onAuthStateChange((_event, session) => {
     set({ session: session || null });
-    if (session?.user) {
-      try { await loadProfile(session.user.id); }
-      catch { set({ profile: null }); }
-    } else {
-      set({ profile: null });
-    }
-    handler(session || null);
+    setTimeout(async () => {
+      if (session?.user) {
+        try { await loadProfile(session.user.id); }
+        catch { set({ profile: null }); }
+      } else {
+        set({ profile: null });
+      }
+      handler(session || null);
+    }, 0);
   });
 }
 

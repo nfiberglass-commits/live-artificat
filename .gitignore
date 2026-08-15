@@ -10,3 +10,4 @@ ni-booking-page.min.html
 node_modules/
 .DS_Store
 Thumbs.db
+.claude/
