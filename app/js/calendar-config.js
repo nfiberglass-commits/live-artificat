@@ -13,6 +13,7 @@ export const HORIZON_WEEKS = 3;
 export const HOLIDAYS = { "2026-08-25": { en: "Mawlid — public holiday", ar: "المولد النبوي — إجازة رسمية" } };
 
 export const TYPES = [
+    { id: "followup",   mins: 60, notice: 1, en: "Follow-up meeting", ar: "اجتماع متابعة" },
     { id: "call",    mins: 20, notice: 1, en: "Quick call",          ar: "مكالمة سريعة" },
     { id: "commercial", mins: 45, notice: 1, en: "Commercial / RFQ",  ar: "تجاري / طلب عرض سعر" },
     { id: "technical",  mins: 45, notice: 1, en: "Technical review",  ar: "مراجعة فنية" },

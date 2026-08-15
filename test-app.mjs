@@ -19,7 +19,10 @@ const check = (name, ok, extra) => {
 console.log("\n== constants survived the split ==");
 check("working day is 09:30-16:30", DAY_START === 570 && DAY_END === 990, DAY_START + "-" + DAY_END);
 check("midday hold is 13:00-14:00", BREAK_A === 780 && BREAK_B === 840);
-check("five meeting types", TYPES.length === 5, TYPES.map(t => t.id).join(","));
+check("six meeting types", TYPES.length === 6, TYPES.map(t => t.id).join(","));
+// The first entry is what the page pre-selects, so this is Ahmed's default.
+check("follow-up is the default and runs 60m",
+  TYPES[0].id === "followup" && TYPES[0].mins === 60, TYPES[0].mins + "m");
 check("factory visit is 90m with 3 days notice",
   typeById("visit").mins === 90 && typeById("visit").notice === 3);
 check("Mawlid is still a closure", Boolean(HOLIDAYS["2026-08-25"]));
