@@ -188,6 +188,62 @@ const EXTRA_CSS = `
     font-size: 13.5px;
     color: var(--ink-3);
   }
+
+  /* Editing a request. The date row is only ever rendered for the admin;
+     an employee sees the same time as plain, unselectable text. */
+  .req-when-fixed {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    color: var(--ink);
+  }
+  body[dir="rtl"] .req-when-fixed { font-family: var(--f-ar); font-size: 14px; }
+
+  .req-move {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .req-move input {
+    font-family: var(--f-mono);
+    font-size: 13px;
+    padding: 7px 9px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .req-move input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  .req-points-edit {
+    width: 100%;
+    min-height: 76px;
+    resize: vertical;
+    font: inherit;
+    font-size: 13.5px;
+    line-height: 1.6;
+    padding: 9px 10px;
+    margin-bottom: 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--r);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .req-points-edit:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+  .req-status {
+    font-family: var(--f-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 99px;
+    border: 1px solid var(--line);
+    color: var(--ink-3);
+  }
+  body[dir="rtl"] .req-status { font-family: var(--f-ar); font-size: 11px; letter-spacing: 0; text-transform: none; }
+  .req-status.is-approved { color: var(--open); border-color: var(--open-line); background: var(--open-bg); }
+  .req-status.is-pending  { color: var(--accent); border-color: var(--accent); }
 `;
 
 insertBefore("</style>", EXTRA_CSS, "style close");
@@ -222,6 +278,15 @@ const SESSION = `
     </div>
 `;
 
+const MYREQUESTS = `
+  <section class="approvals" id="mine" hidden>
+    <h2 data-t="mineTitle">Your requests</h2>
+    <p class="approvals-sub" data-t="mineSub">You can add or change the points any time. Only Ahmed can move a date.</p>
+    <div id="mineList"></div>
+  </section>
+
+`;
+
 const APPROVALS = `
   <section class="approvals" id="approvals" hidden>
     <h2 data-t="apprTitle">Requests waiting on you</h2>
@@ -233,7 +298,7 @@ const APPROVALS = `
 
 insertAfter('<div class="wrap">', "\n" + GATE, "wrap open");
 insertBefore("    <button class=\"lang\" id=\"lang\" type=\"button\">", SESSION, "lang button");
-insertBefore('  <section class="rules">', APPROVALS, "rules section");
+insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS, "rules section");
 
 // 4b. Lift the data-only declarations straight out of the original script so
 // the translations, meeting types and holidays cannot drift during the split.

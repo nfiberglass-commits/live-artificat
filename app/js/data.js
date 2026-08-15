@@ -89,6 +89,32 @@ export async function requestMeeting({ startIso, endIso, typeId, typeLabel, atte
   return data;
 }
 
+// An employee saving their agenda. The database ignores anything else they
+// might send, so this only ever moves the points.
+export async function savePoints(id, points) {
+  const { error } = await supabase
+    .from("meeting_requests")
+    .update({ points })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+// Ahmed moving a meeting and rewriting its agenda in one save.
+// A clash comes back as 409 from the database guard, not from the browser.
+export async function saveRequest(id, { startIso, endIso, points }) {
+  const patch = { points };
+  if (startIso && endIso) {
+    patch.starts_at = startIso;
+    patch.ends_at = endIso;
+  }
+  const { error } = await supabase.from("meeting_requests").update(patch).eq("id", id);
+  if (error) {
+    const err = new Error(isSlotTaken(error) ? "SLOT_TAKEN" : (error.message || "SAVE_FAILED"));
+    err.taken = isSlotTaken(error);
+    throw err;
+  }
+}
+
 export async function decide(id, status) {
   const { error } = await supabase
     .from("meeting_requests")

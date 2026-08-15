@@ -5,6 +5,7 @@ import { t } from "./i18n.js";
 import { onAuth, sendLink, signInWithPassword, signOut, tidyUrl } from "./auth.js";
 import { loadBusy, loadMyRequests, loadPending, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
+import { renderMine } from "./mine.js";
 import {
   applyLang, renderTypes, renderWeek, renderSession, wireChrome,
   jumpToFirstAvailable, tickClock, toast, currentType, requestText, closeBooking
@@ -16,6 +17,7 @@ const $ = (id) => document.getElementById(id);
 
 function redraw() {
   renderWeek();
+  renderMine(refreshAll);
   renderApprovals(refreshAll);
   renderSession();
 }
@@ -145,7 +147,7 @@ renderWeek();
 renderSession();
 tickClock();
 window.setInterval(tickClock, 15000);
-wireChrome(() => renderApprovals(refreshAll));
+wireChrome(() => { renderMine(refreshAll); renderApprovals(refreshAll); });
 
 onAuth(async (session) => {
   if (!session) {
