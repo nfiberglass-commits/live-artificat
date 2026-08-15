@@ -3,7 +3,7 @@
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
 import { onAuth, sendLink, signInWithPassword, signInWithPin, fetchPeople, signOut, tidyUrl } from "./auth.js";
-import { loadBusy, loadMyRequests, loadPending, requestMeeting, watch, stopWatching } from "./data.js";
+import { loadBusy, loadMyRequests, loadPending, loadPeople, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
 import {
@@ -23,7 +23,7 @@ function redraw() {
 }
 
 async function refreshAll() {
-  await Promise.all([loadBusy(), loadMyRequests(), loadPending()]);
+  await Promise.all([loadBusy(), loadMyRequests(), loadPending(), loadPeople()]);
   set({ loading: false });
   applyLang();
   redraw();

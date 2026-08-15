@@ -4,7 +4,7 @@
 
 import { t, fmt } from "./i18n.js";
 import { state, isAdmin } from "./store.js";
-import { cairoInstant, CAIRO } from "./schedule.js";
+import { cairoInstant, CAIRO, typeById } from "./schedule.js";
 import { decide, saveRequest } from "./data.js";
 import { toast } from "./ui.js";
 
@@ -55,20 +55,31 @@ function card(req, tr, onDone) {
   const top = document.createElement("div");
   top.className = "req-top";
 
+  // Who asked comes first. "Who is attending" is useful, but the decision is
+  // about a person, and reading a card without knowing whose request it is was
+  // the first thing that went wrong in real use.
   const who = document.createElement("span");
   who.className = "req-who";
-  who.textContent = req.attending;
+  who.textContent = state.people[req.requester_id] || tr.apprUnknownWho;
+
+  const guests = document.createElement("span");
+  guests.className = "req-type";
+  guests.textContent = req.attending;
 
   const type = document.createElement("span");
   type.className = "req-type";
-  type.textContent = req.type_label + " · " + mins + "m";
+  // Label from the current language, not the English string stored at booking
+  // time - otherwise an Arabic page shows "Quick call" forever.
+  const known = typeById(req.type_id);
+  const label = known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label;
+  type.textContent = label + " · " + mins + "m";
 
   const asked = document.createElement("span");
   asked.className = "req-type";
   asked.textContent = fmt(startsAt, { weekday: "short", day: "numeric", month: "short" }) +
     "  " + fmt(startsAt, { hour: "2-digit", minute: "2-digit", hour12: false });
 
-  top.append(who, type, asked);
+  top.append(who, guests, type, asked);
   el.appendChild(top);
 
   // Date and time are editable here and nowhere else.

@@ -12,6 +12,7 @@ export const state = {
   busy: [],             // [{ s, e }] epoch millis - times only, never detail
   myRequests: [],       // this user's own requests
   pending: [],          // admin only: everyone's pending requests
+  people: {},           // admin only: user id -> full name, to label a request
   // Arabic first - the people booking are the Nile team, and English is the
   // second click rather than the default one.
   lang: "ar",

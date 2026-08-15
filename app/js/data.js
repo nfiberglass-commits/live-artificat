@@ -32,7 +32,7 @@ export async function loadBusy() {
 export async function loadMyRequests() {
   const { data, error } = await supabase
     .from("meeting_requests")
-    .select("id, starts_at, ends_at, type_label, attending, points, status, created_at")
+    .select("id, starts_at, ends_at, type_id, type_label, attending, points, status, created_at")
     .gte("ends_at", new Date().toISOString())
     .order("starts_at");
   if (error) throw error;
@@ -44,13 +44,29 @@ export async function loadPending() {
   if (!isAdmin()) { set({ pending: [] }); return []; }
   const { data, error } = await supabase
     .from("meeting_requests")
-    .select("id, requester_id, starts_at, ends_at, type_label, attending, points, status, created_at")
+    .select("id, requester_id, starts_at, ends_at, type_id, type_label, attending, points, status, created_at")
     .eq("status", "pending")
     .gte("ends_at", new Date().toISOString())
     .order("starts_at");
   if (error) throw error;
   set({ pending: data || [] });
   return data;
+}
+
+// Who asked for each meeting. There is no foreign key to embed through, so the
+// names are fetched separately - and only for the admin, whose policy is the one
+// that permits reading other people's profiles at all. An employee calling this
+// gets their own row back and nothing else.
+export async function loadPeople() {
+  if (!isAdmin()) { set({ people: {} }); return {}; }
+  const { data, error } = await supabase.from("profiles").select("id, full_name");
+  if (error) throw error;
+  const people = {};
+  for (const row of data || []) {
+    if (row.full_name) people[row.id] = row.full_name;
+  }
+  set({ people });
+  return people;
 }
 
 export async function loadProfile(userId) {
@@ -147,7 +163,9 @@ export function watch(onChange) {
       onChange("busy");
     })
     .on("postgres_changes", { event: "*", schema: "public", table: "meeting_requests" }, async () => {
-      await Promise.all([loadMyRequests(), loadPending()]);
+      // People too: a request can arrive from someone who signed in for the
+      // first time after this page loaded, and an unnamed card is useless.
+      await Promise.all([loadMyRequests(), loadPending(), loadPeople()]);
       onChange("requests");
     })
     .subscribe();

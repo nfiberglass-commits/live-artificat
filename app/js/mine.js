@@ -8,6 +8,7 @@
 import { t, fmt } from "./i18n.js";
 import { state } from "./store.js";
 import { savePoints } from "./data.js";
+import { typeById } from "./schedule.js";
 import { toast } from "./ui.js";
 
 const $ = (id) => document.getElementById(id);
@@ -52,7 +53,10 @@ function card(req, tr, onSaved) {
 
   const type = document.createElement("span");
   type.className = "req-type";
-  type.textContent = req.type_label + " · " + mins + "m";
+  // Same reason as the approvals card: show the label in the language on screen,
+  // not the English one frozen at booking time.
+  const known = typeById(req.type_id);
+  type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m";
 
   const status = document.createElement("span");
   status.className = "req-status " + (req.status === "approved" ? "is-approved" : "is-pending");
