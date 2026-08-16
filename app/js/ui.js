@@ -230,6 +230,24 @@ export function applyLang() {
     : "Book a meeting — Ahmed Abbas, Nile Industries";
 }
 
+// Ahmed is the person these meetings are WITH, so the booking form makes no
+// sense for him - it would invite him to request time from himself. He gets the
+// other side of the same screen: his week, and what is waiting on him.
+//
+// This is driven by who is signed in, not by a second "administrator" account.
+// One person, one identity; two accounts would split his approvals across them
+// and Headcount would grant admin to both anyway.
+export function applyAdminView() {
+  const admin = isAdmin();
+  document.body.classList.toggle("is-owner", admin);
+
+  const h1 = document.querySelector('[data-t="h1"]');
+  const sub = document.querySelector('[data-t="sub"]');
+  const tr = t();
+  if (h1) h1.textContent = admin ? tr.h1Owner : tr.h1;
+  if (sub) sub.textContent = admin ? tr.subOwner : tr.sub;
+}
+
 export function renderSession() {
   const tr = t();
   const bar = $("session");

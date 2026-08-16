@@ -8,7 +8,7 @@ import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
 import { renderAccess } from "./access.js";
 import {
-  applyLang, renderTypes, renderWeek, renderSession, wireChrome,
+  applyLang, renderTypes, renderWeek, renderSession, applyAdminView, wireChrome,
   jumpToFirstAvailable, tickClock, toast, currentType, requestText, closeBooking
 } from "./ui.js";
 
@@ -22,6 +22,7 @@ function redraw() {
   renderApprovals(refreshAll);
   renderAccess();
   renderSession();
+  applyAdminView();
   renderTabs();
   showTab(state.tab);
 }
@@ -50,7 +51,11 @@ function renderTabs() {
     b.className = "tab";
     b.role = "tab";
     b.setAttribute("aria-selected", String(tab.key === state.tab));
-    b.textContent = state.lang === "ar" ? tab.label_ar : tab.label_en;
+    // For the owner of the calendar that tab is his appointments, not a form to
+    // book with himself.
+    b.textContent = (tab.key === "booking" && isAdmin())
+      ? t().tabBookingOwner
+      : (state.lang === "ar" ? tab.label_ar : tab.label_en);
     b.addEventListener("click", () => { set({ tab: tab.key }); redraw(); });
     bar.appendChild(b);
   }

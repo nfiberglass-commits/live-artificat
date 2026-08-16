@@ -585,6 +585,13 @@
   .acc-tab.is-default { opacity: .75; }
   .acc-saving { color: var(--ink-2); font-size: 12px; }
 
+  /* The owner of the calendar does not book time with himself. He keeps the
+     week view - he needs to see his own commitments - but not the form. */
+  body.is-owner .toolbar .field-grow,
+  body.is-owner #booking,
+  body.is-owner .rules { display: none; }
+  body.is-owner .toolbar { justify-content: flex-end; }
+
   /* ---------- added for the hosted app: sign-in, session bar, approvals ---------- */
 
   .gate {

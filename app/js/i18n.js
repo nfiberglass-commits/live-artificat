@@ -11,6 +11,9 @@ const EXTRA = {
   en: {
     gateTitle: "Sign in",
     gateSub: "Your employee code and the PIN you use on the HR panels.",
+    h1Owner: "Your week",
+    subOwner: "Your commitments, and the requests waiting on you.",
+    tabBookingOwner: "Appointments",
     accTitle: "Permissions",
     accSub: "Tick what each person may open. Only you can change this.",
     accNobody: "Nobody has signed in yet.",
@@ -67,6 +70,9 @@ const EXTRA = {
   ar: {
     gateTitle: "تسجيل الدخول",
     gateSub: "كود الموظف والرقم السري اللذان تستخدمهما في لوحات الموارد البشرية.",
+    h1Owner: "أسبوعك",
+    subOwner: "ارتباطاتك، والطلبات المستنية منك.",
+    tabBookingOwner: "المواعيد",
     accTitle: "الصلاحيات",
     accSub: "علّم على اللي كل واحد يقدر يفتحه. إنت وحدك اللي بتغيّر ده.",
     accNobody: "محدش سجّل دخول لسه.",
