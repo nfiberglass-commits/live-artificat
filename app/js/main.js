@@ -7,6 +7,7 @@ import { loadBusy, loadMyRequests, loadPending, loadPeople, loadMyTabs, loadAcce
 import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
 import { renderAccess } from "./access.js";
+import { renderPins, clearPins } from "./pins.js";
 import {
   applyLang, renderTypes, renderWeek, renderSession, applyAdminView, wireChrome,
   jumpToFirstAvailable, tickClock, toast, currentType, requestText, closeBooking
@@ -66,7 +67,7 @@ function renderTabs() {
 // the switch hides by exception rather than by keeping a list that would rot as
 // tabs are added.
 function showTab(key) {
-  const owned = { access: "access" };
+  const owned = { access: "access", pins: "pins" };
   const wrap = document.querySelector(".wrap");
   if (!wrap) return;
   for (const el of wrap.children) {
@@ -81,6 +82,11 @@ function showTab(key) {
     renderMine(refreshAll);
     renderApprovals(refreshAll);
   }
+
+  // PINs are fetched when the tab is opened and dropped when it is left, so an
+  // idle screen never sits there displaying everyone's credentials.
+  if (key === "pins") renderPins();
+  else clearPins();
 }
 
 /* ---------- sign-in gate ---------- */

@@ -84,6 +84,17 @@ const EXTRA_CSS = `
   .acc-tab.is-default { opacity: .75; }
   .acc-saving { color: var(--ink-2); font-size: 12px; }
 
+  .pins-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .pins-table th {
+    text-align: start; font-size: 12px; color: var(--ink-2); font-weight: 600;
+    padding: 8px 10px; border-bottom: 1px solid var(--line);
+  }
+  .pins-table td { padding: 9px 10px; border-bottom: 1px solid var(--line-soft, #eee); }
+  .pins-table tr:last-child td { border-bottom: 0; }
+  .pins-table .mono { font-family: Consolas, "SF Mono", monospace; }
+  .pins-table tr.is-off { opacity: .5; }
+  .pins-table td .btn { padding: 4px 14px; font-size: 13px; }
+
   /* The owner of the calendar does not book time with himself. He keeps the
      week view - he needs to see his own commitments - but not the form. */
   body.is-owner .toolbar .field-grow,
@@ -356,6 +367,15 @@ const ACCESS = `
 
 `;
 
+const PINS = `
+  <section class="approvals" id="pins" hidden>
+    <h2 data-t="pinsTitle">Sign-in codes</h2>
+    <p class="approvals-sub" data-t="pinsSub">Send each person their code and PIN. Only you can see this.</p>
+    <div id="pinsList"></div>
+  </section>
+
+`;
+
 const MYREQUESTS = `
   <section class="approvals" id="mine" hidden>
     <h2 data-t="mineTitle">Your requests</h2>
@@ -376,7 +396,7 @@ const APPROVALS = `
 
 insertAfter('<div class="wrap">', "\n" + GATE, "wrap open");
 insertBefore('  <header class="mast">', TOPBAR, "mast header");
-insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS + ACCESS, "rules section");
+insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS + ACCESS + PINS, "rules section");
 
 // 4b. Lift the data-only declarations straight out of the original script so
 // the translations, meeting types and holidays cannot drift during the split.

@@ -25,3 +25,8 @@ export const PIN_LOGIN_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-book
 // the page; Ahmed weighed that against making people remember a number and chose
 // the dropdown, matching the HR panels they already use.
 export const USERS_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-book-users";
+
+// The PIN list, for the admin only. n8n verifies the session token with Supabase
+// and reads the caller's role with its own key before answering - being signed
+// in is not the same as being allowed.
+export const PINS_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-access-pins-session";
