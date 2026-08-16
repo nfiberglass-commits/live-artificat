@@ -5,7 +5,7 @@
 import { t, fmt } from "./i18n.js";
 import { state, isAdmin } from "./store.js";
 import { cairoInstant, CAIRO, typeById } from "./schedule.js";
-import { decide, saveRequest } from "./data.js";
+import { decide, saveRequest, moveMeeting, cancelMeeting } from "./data.js";
 import { toast } from "./ui.js";
 
 const $ = (id) => document.getElementById(id);
@@ -28,6 +28,130 @@ export function renderApprovals(onDone) {
   }
 
   state.pending.forEach((req) => host.appendChild(card(req, tr, onDone)));
+}
+
+// Meetings already agreed. Approving used to be the end of the story: the
+// request left this panel and the only way to move it was Google Calendar, which
+// the page cannot see. Now it stays here until it has happened.
+export function renderUpcoming(onDone) {
+  const panel = $("upcoming");
+  if (!panel) return;
+  if (!isAdmin()) { panel.hidden = true; return; }
+
+  const tr = t();
+  panel.hidden = false;
+  const host = $("upcomingList");
+  host.innerHTML = "";
+
+  if (!state.upcoming.length) {
+    const empty = document.createElement("div");
+    empty.className = "approvals-empty";
+    empty.textContent = tr.upNone;
+    host.appendChild(empty);
+    return;
+  }
+
+  state.upcoming.forEach((req) => host.appendChild(upcomingCard(req, tr, onDone)));
+}
+
+function upcomingCard(req, tr, onDone) {
+  const el = document.createElement("div");
+  el.className = "req";
+
+  const startsAt = new Date(req.starts_at);
+  const mins = Math.round((Date.parse(req.ends_at) - startsAt.getTime()) / 60000);
+  const parts = cairoParts(req.starts_at);
+
+  const top = document.createElement("div");
+  top.className = "req-top";
+
+  const who = document.createElement("span");
+  who.className = "req-who";
+  who.textContent = state.people[req.requester_id] || req.attending || tr.apprUnknownWho;
+
+  const type = document.createElement("span");
+  type.className = "req-type";
+  const known = typeById(req.type_id);
+  type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m";
+
+  top.append(who, type);
+  el.appendChild(top);
+
+  const move = document.createElement("div");
+  move.className = "req-move";
+  const dateIn = document.createElement("input");
+  dateIn.type = "date";
+  dateIn.value = parts.date;
+  dateIn.title = tr.apprMove;
+  const timeIn = document.createElement("input");
+  timeIn.type = "time";
+  timeIn.step = "300";
+  timeIn.value = parts.time;
+  timeIn.title = tr.apprMove;
+  move.append(dateIn, timeIn);
+  el.appendChild(move);
+
+  if (String(req.points || "").trim()) {
+    const points = document.createElement("div");
+    points.className = "req-points-read";
+    points.textContent = req.points;
+    el.appendChild(points);
+  }
+
+  const acts = document.createElement("div");
+  acts.className = "req-acts";
+
+  const save = document.createElement("button");
+  save.type = "button";
+  save.className = "btn";
+  save.textContent = tr.upMove;
+  save.addEventListener("click", async () => {
+    const when = readWhen(dateIn.value, timeIn.value);
+    if (!when) { toast(tr.upBadTime); return; }
+    save.disabled = true;
+    try {
+      await moveMeeting(req.id, when);
+      toast(tr.upMoved);
+      await onDone();
+    } catch (e) {
+      // The clash guard speaks here: the database refuses a move onto a time
+      // that is already taken, whatever this page believes.
+      toast(/guard|overlap|busy|conflict/i.test(String(e && e.message)) ? tr.upClash : tr.upMoveFailed);
+      save.disabled = false;
+    }
+  });
+
+  const off = document.createElement("button");
+  off.type = "button";
+  off.className = "btn btn-quiet";
+  off.textContent = tr.upCancel;
+  off.addEventListener("click", async () => {
+    if (!window.confirm(tr.upCancelConfirm)) return;
+    off.disabled = true;
+    try {
+      await cancelMeeting(req.id);
+      toast(tr.upCancelled);
+      await onDone();
+    } catch {
+      toast(tr.upCancelFailed);
+      off.disabled = false;
+    }
+  });
+
+  acts.append(save, off);
+  el.appendChild(acts);
+  return el;
+}
+
+// The two inputs are Cairo wall clock; cairoInstant turns them back into the
+// real moment, which is what keeps a summer/winter change from shifting a
+// meeting by an hour.
+function readWhen(dateStr, timeStr) {
+  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(dateStr || ""));
+  const t2 = /^(\d{2}):(\d{2})$/.exec(String(timeStr || ""));
+  if (!d || !t2) return null;
+  const mins = Number(t2[1]) * 60 + Number(t2[2]);
+  return cairoInstant(Number(d[1]), Number(d[2]), Number(d[3]), mins);
 }
 
 // The stored instant, expressed as Cairo wall clock, for the date and time

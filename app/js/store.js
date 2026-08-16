@@ -19,6 +19,7 @@ export const state = {
   access: {},           // admin only: user id -> { tab key -> allowed }
   roles: {},            // admin only: user id -> role
   agenda: [],           // admin only: [{s, e, t}] labels for blocked slots
+  upcoming: [],         // admin only: approved meetings still ahead
   // Arabic first - the people booking are the Nile team, and English is the
   // second click rather than the default one.
   lang: "ar",

@@ -166,6 +166,48 @@ export async function loadAgenda() {
   return agenda;
 }
 
+// Meetings Ahmed has already approved and that have not happened yet. Without
+// this they vanish from his screen the moment he approves, and the only way to
+// move one is Google Calendar - where this page cannot see it.
+export async function loadUpcoming() {
+  if (!isAdmin()) { set({ upcoming: [] }); return []; }
+  const { data, error } = await supabase
+    .from("meeting_requests")
+    .select("id, requester_id, starts_at, ends_at, type_id, type_label, attending, points, status")
+    .eq("status", "approved")
+    .gte("ends_at", new Date().toISOString())
+    .order("starts_at");
+  if (error) throw error;
+  set({ upcoming: data || [] });
+  return data;
+}
+
+// Move an approved meeting. The duration is carried over rather than recomputed,
+// so a 20-minute call stays 20 minutes wherever it lands. guard_slot_free runs
+// on the update, so a move onto an occupied time is refused by the database.
+export async function moveMeeting(id, startsAt) {
+  const req = (state.upcoming || []).find((r) => r.id === id);
+  if (!req) throw new Error("NOT_FOUND");
+  const mins = Math.round((Date.parse(req.ends_at) - Date.parse(req.starts_at)) / 60000);
+  const ends = new Date(startsAt.getTime() + mins * 60000);
+  const { error } = await supabase
+    .from("meeting_requests")
+    .update({ starts_at: startsAt.toISOString(), ends_at: ends.toISOString() })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+// Call off an approved meeting. Marked cancelled rather than deleted so the
+// requester can see it was called off instead of silently disappearing, and
+// sync_busy_slot frees the time because the status is no longer 'approved'.
+export async function cancelMeeting(id) {
+  const { error } = await supabase
+    .from("meeting_requests")
+    .update({ status: "cancelled" })
+    .eq("id", id);
+  if (error) throw error;
+}
+
 export async function loadProfile(userId) {
   const { data, error } = await supabase
     .from("profiles")

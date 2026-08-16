@@ -367,6 +367,15 @@ const ACCESS = `
 
 `;
 
+const UPCOMING = `
+  <section class="approvals" id="upcoming" hidden>
+    <h2 data-t="upTitle">Agreed meetings</h2>
+    <p class="approvals-sub" data-t="upSub">Change a time or call one off. Cancelling puts the slot back for everyone else.</p>
+    <div id="upcomingList"></div>
+  </section>
+
+`;
+
 const PINS = `
   <section class="approvals" id="pins" hidden>
     <h2 data-t="pinsTitle">Sign-in codes</h2>
@@ -396,7 +405,7 @@ const APPROVALS = `
 
 insertAfter('<div class="wrap">', "\n" + GATE, "wrap open");
 insertBefore('  <header class="mast">', TOPBAR, "mast header");
-insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS + ACCESS + PINS, "rules section");
+insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS + UPCOMING + ACCESS + PINS, "rules section");
 
 // 4b. Lift the data-only declarations straight out of the original script so
 // the translations, meeting types and holidays cannot drift during the split.

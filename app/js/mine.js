@@ -63,8 +63,8 @@ function card(req, tr, onSaved) {
   // and called everything else pending. She would have gone on expecting an
   // answer that had already been given.
   const status = document.createElement("span");
-  const shown = { approved: "is-approved", declined: "is-declined" }[req.status] || "is-pending";
-  const label = { approved: tr.statusApproved, declined: tr.statusDeclined }[req.status] || tr.statusPending;
+  const shown = { approved: "is-approved", declined: "is-declined", cancelled: "is-declined" }[req.status] || "is-pending";
+  const label = { approved: tr.statusApproved, declined: tr.statusDeclined, cancelled: tr.statusCancelled }[req.status] || tr.statusPending;
   status.className = "req-status " + shown;
   status.textContent = label;
 
@@ -103,8 +103,8 @@ function card(req, tr, onSaved) {
   // Withdrawing is offered only while the request is still pending. Once Ahmed
   // has approved it the time is on his calendar, and taking it back is a
   // conversation rather than a button - the database refuses it either way.
-  if (req.status === "pending" || req.status === "declined") {
-    const declined = req.status === "declined";
+  if (["pending", "declined", "cancelled"].includes(req.status)) {
+    const declined = req.status !== "pending";
     const cancel = document.createElement("button");
     cancel.type = "button";
     cancel.className = "btn btn-quiet";

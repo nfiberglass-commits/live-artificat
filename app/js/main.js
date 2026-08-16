@@ -3,8 +3,8 @@
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
 import { onAuth, sendLink, signInWithPassword, signInWithPin, fetchPeople, signOut, tidyUrl } from "./auth.js";
-import { loadBusy, loadMyRequests, loadPending, loadPeople, loadMyTabs, loadAccessMatrix, loadAgenda, requestMeeting, watch, stopWatching } from "./data.js";
-import { renderApprovals } from "./admin.js";
+import { loadBusy, loadMyRequests, loadPending, loadPeople, loadMyTabs, loadAccessMatrix, loadAgenda, loadUpcoming, requestMeeting, watch, stopWatching } from "./data.js";
+import { renderApprovals, renderUpcoming } from "./admin.js";
 import { renderMine } from "./mine.js";
 import { renderAccess } from "./access.js";
 import { renderPins, clearPins } from "./pins.js";
@@ -21,6 +21,7 @@ function redraw() {
   renderWeek();
   renderMine(refreshAll);
   renderApprovals(refreshAll);
+  renderUpcoming(refreshAll);
   renderAccess();
   renderSession();
   applyAdminView();
@@ -31,7 +32,7 @@ function redraw() {
 async function refreshAll() {
   await Promise.all([
     loadBusy(), loadMyRequests(), loadPending(), loadPeople(),
-    loadMyTabs(), loadAccessMatrix()
+    loadMyTabs(), loadAccessMatrix(), loadUpcoming()
   ]);
   // After loadPeople, so an approved meeting can be labelled with the requester's
   // name rather than their user id.
@@ -84,6 +85,7 @@ function showTab(key) {
   if (key === "booking") {
     renderMine(refreshAll);
     renderApprovals(refreshAll);
+    renderUpcoming(refreshAll);
   }
 
   // PINs are fetched when the tab is opened and dropped when it is left, so an
