@@ -7,7 +7,7 @@
 
 import { t, fmt } from "./i18n.js";
 import { state } from "./store.js";
-import { savePoints } from "./data.js";
+import { savePoints, cancelRequest } from "./data.js";
 import { typeById } from "./schedule.js";
 import { toast } from "./ui.js";
 
@@ -93,6 +93,30 @@ function card(req, tr, onSaved) {
   });
 
   acts.appendChild(save);
+
+  // Withdrawing is offered only while the request is still pending. Once Ahmed
+  // has approved it the time is on his calendar, and taking it back is a
+  // conversation rather than a button - the database refuses it either way.
+  if (req.status === "pending") {
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.className = "btn btn-quiet";
+    cancel.textContent = tr.cancelReq;
+    cancel.addEventListener("click", async () => {
+      if (!window.confirm(tr.cancelConfirm)) return;
+      cancel.disabled = true;
+      try {
+        await cancelRequest(req.id);
+        toast(tr.cancelled);
+        await onSaved();
+      } catch {
+        toast(tr.cancelFailed);
+        cancel.disabled = false;
+      }
+    });
+    acts.appendChild(cancel);
+  }
+
   el.appendChild(acts);
   return el;
 }

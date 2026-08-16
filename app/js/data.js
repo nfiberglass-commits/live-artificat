@@ -115,6 +115,15 @@ export async function setTabAccess(userId, tabKey, allowed) {
   set({ access });
 }
 
+// Withdraw a request. The policy allows this only for your own row while it is
+// still pending, so an approved meeting cannot vanish from Ahmed's calendar
+// without him - he declines those, which is a different act with a different
+// record.
+export async function cancelRequest(id) {
+  const { error } = await supabase.from("meeting_requests").delete().eq("id", id);
+  if (error) throw error;
+}
+
 export async function loadProfile(userId) {
   const { data, error } = await supabase
     .from("profiles")

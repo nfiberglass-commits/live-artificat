@@ -49,6 +49,12 @@ if (inline.length < 20000) throw new Error("inline script looked too small: " + 
 
 // 3. styles for the pieces that did not exist before, built from the same tokens
 const EXTRA_CSS = `
+  /* Withdrawing sits beside Save but must not compete with it for the eye. */
+  .btn-quiet {
+    background: none; color: var(--ink-2); border: 1px solid var(--line);
+  }
+  .btn-quiet:hover { color: #b4231f; border-color: #b4231f; }
+
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; flex-wrap: wrap; margin-bottom: 18px;

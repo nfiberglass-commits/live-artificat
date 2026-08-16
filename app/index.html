@@ -556,6 +556,12 @@
     body[dir="rtl"] .clock { align-items: flex-end; }
   }
 
+  /* Withdrawing sits beside Save but must not compete with it for the eye. */
+  .btn-quiet {
+    background: none; color: var(--ink-2); border: 1px solid var(--line);
+  }
+  .btn-quiet:hover { color: #b4231f; border-color: #b4231f; }
+
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
     gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
