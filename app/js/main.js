@@ -3,7 +3,7 @@
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
 import { onAuth, sendLink, signInWithPassword, signInWithPin, fetchPeople, signOut, tidyUrl } from "./auth.js";
-import { loadBusy, loadMyRequests, loadPending, loadPeople, loadMyTabs, loadAccessMatrix, requestMeeting, watch, stopWatching } from "./data.js";
+import { loadBusy, loadMyRequests, loadPending, loadPeople, loadMyTabs, loadAccessMatrix, loadAgenda, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
 import { renderAccess } from "./access.js";
@@ -33,6 +33,9 @@ async function refreshAll() {
     loadBusy(), loadMyRequests(), loadPending(), loadPeople(),
     loadMyTabs(), loadAccessMatrix()
   ]);
+  // After loadPeople, so an approved meeting can be labelled with the requester's
+  // name rather than their user id.
+  await loadAgenda();
   set({ loading: false });
   applyLang();
   redraw();

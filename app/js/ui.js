@@ -2,7 +2,7 @@
 // page, so the look is unchanged; only where the data comes from has moved.
 
 import { t, fmt, hhmm, toggleLang } from "./i18n.js";
-import { state, set, isAdmin, overlapsBusy } from "./store.js";
+import { state, set, isAdmin, overlapsBusy, labelFor } from "./store.js";
 import {
   CAIRO, HORIZON_WEEKS, HOLIDAYS, TYPES,
   cairoToday, cairoInstant, addDays, weekdayOf, isoOf, compare,
@@ -145,7 +145,17 @@ function slotBox(list, tr) {
       b.disabled = true;
       const tk = document.createElement("span");
       tk.className = "local";
-      tk.textContent = tr.taken;
+      // Ahmed sees WHAT is in the slot; everyone else sees only that it is
+      // taken. labelFor returns nothing unless the reader is the admin, so this
+      // one line cannot leak a subject by accident.
+      const label = labelFor(sl.instant, typeById(state.typeId).mins);
+      if (label) {
+        tk.textContent = label;
+        tk.title = label;
+        b.classList.add("taken-named");
+      } else {
+        tk.textContent = tr.taken;
+      }
       b.appendChild(tk);
       box.appendChild(b);
       return;

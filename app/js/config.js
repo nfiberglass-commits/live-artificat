@@ -30,3 +30,8 @@ export const USERS_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-book-use
 // and reads the caller's role with its own key before answering - being signed
 // in is not the same as being allowed.
 export const PINS_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-access-pins-session";
+
+// What is in each blocked slot - titles from Google Calendar, admin only.
+// ⛔ These never go into busy_slots. That table holds times and nothing else, so
+// an employee reading it cannot leak a subject that is not there to leak.
+export const AGENDA_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-book-agenda";

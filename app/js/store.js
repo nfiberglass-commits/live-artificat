@@ -18,6 +18,7 @@ export const state = {
   allTabs: [],          // admin only: the whole catalogue
   access: {},           // admin only: user id -> { tab key -> allowed }
   roles: {},            // admin only: user id -> role
+  agenda: [],           // admin only: [{s, e, t}] labels for blocked slots
   // Arabic first - the people booking are the Nile team, and English is the
   // second click rather than the default one.
   lang: "ar",
@@ -54,6 +55,15 @@ export function setBusyFromRows(rows) {
   }
   busy.sort((a, b) => a.s - b.s);
   set({ busy });
+}
+
+// What occupies a slot, for the admin's own screen. Returns "" for everyone
+// else, because state.agenda is only ever populated for an admin.
+export function labelFor(instant, mins) {
+  const s = instant.getTime();
+  const e = s + mins * 60000;
+  const hit = state.agenda.find((a) => s < a.e && e > a.s);
+  return hit ? hit.t : "";
 }
 
 export function overlapsBusy(instant, mins) {

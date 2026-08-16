@@ -5,7 +5,7 @@
 // is allowed to see.
 
 import { supabase, isSlotTaken } from "./supabase.js";
-import { BUSY_WINDOW_DAYS } from "./config.js";
+import { BUSY_WINDOW_DAYS, AGENDA_URL } from "./config.js";
 import { state, set, setBusyFromRows, isAdmin } from "./store.js";
 
 function windowBounds() {
@@ -122,6 +122,48 @@ export async function setTabAccess(userId, tabKey, allowed) {
 export async function cancelRequest(id) {
   const { error } = await supabase.from("meeting_requests").delete().eq("id", id);
   if (error) throw error;
+}
+
+// Labels for the blocked slots on Ahmed's own screen: calendar titles from
+// Google, plus the meetings he has approved here. Nothing is written to
+// busy_slots - the label exists only in his browser, for as long as the page is
+// open.
+export async function loadAgenda() {
+  if (!isAdmin()) { set({ agenda: [] }); return []; }
+
+  const agenda = [];
+
+  // Approved meetings are already ours to read, and the requester's name is more
+  // use to Ahmed than a calendar title would be.
+  const { data: mine } = await supabase
+    .from("meeting_requests")
+    .select("starts_at, ends_at, requester_id, attending")
+    .eq("status", "approved")
+    .gte("ends_at", new Date().toISOString());
+  for (const r of mine || []) {
+    const who = state.people[r.requester_id] || r.attending || "";
+    agenda.push({ s: Date.parse(r.starts_at), e: Date.parse(r.ends_at), t: who, own: true });
+  }
+
+  // Calendar titles come from n8n, which checks the session before answering.
+  try {
+    const res = await fetch(AGENDA_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: state.session?.access_token || "" })
+    });
+    const data = await res.json();
+    if (data && data.ok) {
+      for (const it of data.items || []) {
+        agenda.push({ s: Date.parse(it.s), e: Date.parse(it.e), t: it.t, own: false });
+      }
+    }
+  } catch {
+    // A missing label is a cosmetic loss; the slot is still correctly blocked.
+  }
+
+  set({ agenda });
+  return agenda;
 }
 
 export async function loadProfile(userId) {
