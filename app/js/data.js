@@ -69,6 +69,52 @@ export async function loadPeople() {
   return people;
 }
 
+// Which tabs this person may open. The database resolves the defaults, so the
+// page never has to reason about them.
+export async function loadMyTabs() {
+  const { data, error } = await supabase.rpc("my_tabs");
+  if (error) throw error;
+  set({ myTabs: data || [] });
+  return data;
+}
+
+// The catalogue and every stored decision - admin only, and the policy on
+// tab_access is what actually enforces that.
+export async function loadAccessMatrix() {
+  if (!isAdmin()) { set({ allTabs: [], access: {}, roles: {} }); return; }
+
+  const [tabs, grants, profiles] = await Promise.all([
+    supabase.from("tabs").select("key, label_en, label_ar, sort, default_on").eq("active", true).order("sort"),
+    supabase.from("tab_access").select("user_id, tab_key, allowed"),
+    supabase.from("profiles").select("id, role")
+  ]);
+  if (tabs.error) throw tabs.error;
+  if (grants.error) throw grants.error;
+  if (profiles.error) throw profiles.error;
+
+  const access = {};
+  for (const g of grants.data || []) {
+    if (!access[g.user_id]) access[g.user_id] = {};
+    access[g.user_id][g.tab_key] = g.allowed;
+  }
+  const roles = {};
+  for (const p of profiles.data || []) roles[p.id] = p.role;
+
+  set({ allTabs: tabs.data || [], access, roles });
+}
+
+export async function setTabAccess(userId, tabKey, allowed) {
+  const { error } = await supabase
+    .from("tab_access")
+    .upsert({ user_id: userId, tab_key: tabKey, allowed, granted_by: state.session?.user?.id },
+            { onConflict: "user_id,tab_key" });
+  if (error) throw error;
+
+  const access = { ...state.access };
+  access[userId] = { ...(access[userId] || {}), [tabKey]: allowed };
+  set({ access });
+}
+
 export async function loadProfile(userId) {
   const { data, error } = await supabase
     .from("profiles")

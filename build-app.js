@@ -49,6 +49,35 @@ if (inline.length < 20000) throw new Error("inline script looked too small: " + 
 
 // 3. styles for the pieces that did not exist before, built from the same tokens
 const EXTRA_CSS = `
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  .topbar[hidden] { display: none; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab {
+    background: none; border: 0; border-radius: 7px; cursor: pointer;
+    padding: 8px 14px; font: inherit; font-size: 14px; color: var(--ink-2);
+  }
+  .tab:hover { background: var(--tint); color: var(--ink); }
+  .tab[aria-selected="true"] { background: var(--ink); color: #fff; }
+  /* One tab is not a choice, so the bar only earns its space from two. */
+  .tabs:has(.tab:only-child) { display: none; }
+
+  .acc-person {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 11px 0; border-bottom: 1px solid var(--line-soft, #eee);
+  }
+  .acc-person:last-child { border-bottom: 0; }
+  .acc-name { flex: 1 1 190px; font-size: 14px; }
+  .acc-name .acc-role { color: var(--ink-2); font-size: 12px; margin-inline-start: 6px; }
+  .acc-tabs { display: flex; gap: 14px; flex-wrap: wrap; }
+  .acc-tab { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .acc-tab input { width: 15px; height: 15px; }
+  .acc-tab.is-default { opacity: .75; }
+  .acc-saving { color: var(--ink-2); font-size: 12px; }
+
   /* ---------- added for the hosted app: sign-in, session bar, approvals ---------- */
 
   .gate {
@@ -294,6 +323,24 @@ const SESSION = `
     </div>
 `;
 
+// The tab bar carries the session with it, so signing out stays reachable from
+// every tab rather than only from the booking screen.
+const TOPBAR = `
+<div class="topbar" id="topbar" hidden>
+  <nav class="tabs" id="tabbar" role="tablist"></nav>
+${SESSION}</div>
+
+`;
+
+const ACCESS = `
+  <section class="approvals" id="access" hidden>
+    <h2 data-t="accTitle">Permissions</h2>
+    <p class="approvals-sub" data-t="accSub">Tick what each person may open. Only you can change this.</p>
+    <div id="accList"></div>
+  </section>
+
+`;
+
 const MYREQUESTS = `
   <section class="approvals" id="mine" hidden>
     <h2 data-t="mineTitle">Your requests</h2>
@@ -313,8 +360,8 @@ const APPROVALS = `
 `;
 
 insertAfter('<div class="wrap">', "\n" + GATE, "wrap open");
-insertBefore("    <button class=\"lang\" id=\"lang\" type=\"button\">", SESSION, "lang button");
-insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS, "rules section");
+insertBefore('  <header class="mast">', TOPBAR, "mast header");
+insertBefore('  <section class="rules">', MYREQUESTS + APPROVALS + ACCESS, "rules section");
 
 // 4b. Lift the data-only declarations straight out of the original script so
 // the translations, meeting types and holidays cannot drift during the split.

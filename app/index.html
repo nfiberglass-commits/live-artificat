@@ -556,6 +556,35 @@
     body[dir="rtl"] .clock { align-items: flex-end; }
   }
 
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+    padding-bottom: 12px; border-bottom: 1px solid var(--line);
+  }
+  .topbar[hidden] { display: none; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab {
+    background: none; border: 0; border-radius: 7px; cursor: pointer;
+    padding: 8px 14px; font: inherit; font-size: 14px; color: var(--ink-2);
+  }
+  .tab:hover { background: var(--tint); color: var(--ink); }
+  .tab[aria-selected="true"] { background: var(--ink); color: #fff; }
+  /* One tab is not a choice, so the bar only earns its space from two. */
+  .tabs:has(.tab:only-child) { display: none; }
+
+  .acc-person {
+    display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    padding: 11px 0; border-bottom: 1px solid var(--line-soft, #eee);
+  }
+  .acc-person:last-child { border-bottom: 0; }
+  .acc-name { flex: 1 1 190px; font-size: 14px; }
+  .acc-name .acc-role { color: var(--ink-2); font-size: 12px; margin-inline-start: 6px; }
+  .acc-tabs { display: flex; gap: 14px; flex-wrap: wrap; }
+  .acc-tab { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--ink-2); }
+  .acc-tab input { width: 15px; height: 15px; }
+  .acc-tab.is-default { opacity: .75; }
+  .acc-saving { color: var(--ink-2); font-size: 12px; }
+
   /* ---------- added for the hosted app: sign-in, session bar, approvals ---------- */
 
   .gate {
@@ -795,6 +824,17 @@
 </div>
 
 
+
+<div class="topbar" id="topbar" hidden>
+  <nav class="tabs" id="tabbar" role="tablist"></nav>
+
+    <div class="session" id="session" hidden>
+      <span class="session-who" id="sessionWho"></span>
+      <span class="session-role" id="sessionRole" hidden></span>
+      <button class="navbtn" id="signOut" type="button" data-t="signOut">Sign out</button>
+    </div>
+</div>
+
   <header class="mast">
     <div class="mast-id">
       <div class="eyebrow" data-t="eyebrow">Nile Industries · FRP / GRP</div>
@@ -812,12 +852,6 @@
     <div class="field field-grow">
       <span class="lbl" data-t="lblType">What is the meeting about</span>
       <div class="types" id="types" role="group"></div>
-    </div>
-
-    <div class="session" id="session" hidden>
-      <span class="session-who" id="sessionWho"></span>
-      <span class="session-role" id="sessionRole" hidden></span>
-      <button class="navbtn" id="signOut" type="button" data-t="signOut">Sign out</button>
     </div>
     <button class="lang" id="lang" type="button">العربية</button>
   </div>
@@ -878,6 +912,13 @@
     <h2 data-t="apprTitle">Requests waiting on you</h2>
     <p class="approvals-sub" data-t="apprSub">Approving takes the slot off the calendar for everyone else. Declining reopens it.</p>
     <div id="apprList"></div>
+  </section>
+
+
+  <section class="approvals" id="access" hidden>
+    <h2 data-t="accTitle">Permissions</h2>
+    <p class="approvals-sub" data-t="accSub">Tick what each person may open. Only you can change this.</p>
+    <div id="accList"></div>
   </section>
 
   <section class="rules">

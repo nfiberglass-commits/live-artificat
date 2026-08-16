@@ -13,6 +13,11 @@ export const state = {
   myRequests: [],       // this user's own requests
   pending: [],          // admin only: everyone's pending requests
   people: {},           // admin only: user id -> full name, to label a request
+  myTabs: [],           // tabs this person may open, defaults already resolved
+  tab: "booking",       // which one is on screen
+  allTabs: [],          // admin only: the whole catalogue
+  access: {},           // admin only: user id -> { tab key -> allowed }
+  roles: {},            // admin only: user id -> role
   // Arabic first - the people booking are the Nile team, and English is the
   // second click rather than the default one.
   lang: "ar",

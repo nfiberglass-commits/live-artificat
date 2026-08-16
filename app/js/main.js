@@ -3,9 +3,10 @@
 import { state, set, isAdmin } from "./store.js";
 import { t } from "./i18n.js";
 import { onAuth, sendLink, signInWithPassword, signInWithPin, fetchPeople, signOut, tidyUrl } from "./auth.js";
-import { loadBusy, loadMyRequests, loadPending, loadPeople, requestMeeting, watch, stopWatching } from "./data.js";
+import { loadBusy, loadMyRequests, loadPending, loadPeople, loadMyTabs, loadAccessMatrix, requestMeeting, watch, stopWatching } from "./data.js";
 import { renderApprovals } from "./admin.js";
 import { renderMine } from "./mine.js";
+import { renderAccess } from "./access.js";
 import {
   applyLang, renderTypes, renderWeek, renderSession, wireChrome,
   jumpToFirstAvailable, tickClock, toast, currentType, requestText, closeBooking
@@ -19,14 +20,62 @@ function redraw() {
   renderWeek();
   renderMine(refreshAll);
   renderApprovals(refreshAll);
+  renderAccess();
   renderSession();
+  renderTabs();
+  showTab(state.tab);
 }
 
 async function refreshAll() {
-  await Promise.all([loadBusy(), loadMyRequests(), loadPending(), loadPeople()]);
+  await Promise.all([
+    loadBusy(), loadMyRequests(), loadPending(), loadPeople(),
+    loadMyTabs(), loadAccessMatrix()
+  ]);
   set({ loading: false });
   applyLang();
   redraw();
+}
+
+/* ---------- tabs ---------- */
+
+// ⛔ This decides what is DRAWN, nothing more. Every tab's data is guarded by its
+// own database policies; a hidden tab is not a protected one.
+function renderTabs() {
+  const bar = $("tabbar");
+  if (!bar) return;
+  bar.innerHTML = "";
+  for (const tab of state.myTabs) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "tab";
+    b.role = "tab";
+    b.setAttribute("aria-selected", String(tab.key === state.tab));
+    b.textContent = state.lang === "ar" ? tab.label_ar : tab.label_en;
+    b.addEventListener("click", () => { set({ tab: tab.key }); redraw(); });
+    bar.appendChild(b);
+  }
+  $("topbar").hidden = !state.session;
+}
+
+// Everything in the page belongs to booking except the panels a tab owns, so
+// the switch hides by exception rather than by keeping a list that would rot as
+// tabs are added.
+function showTab(key) {
+  const owned = { access: "access" };
+  const wrap = document.querySelector(".wrap");
+  if (!wrap) return;
+  for (const el of wrap.children) {
+    if (el.id === "gate" || el.id === "topbar") continue;
+    const ownerOf = Object.entries(owned).find(([, id]) => id === el.id);
+    if (ownerOf) { el.hidden = key !== ownerOf[0]; continue; }
+    el.hidden = key !== "booking";
+  }
+  // These two carry their own emptiness rules, so let them decide again rather
+  // than leaving an empty panel on screen.
+  if (key === "booking") {
+    renderMine(refreshAll);
+    renderApprovals(refreshAll);
+  }
 }
 
 /* ---------- sign-in gate ---------- */
