@@ -793,6 +793,8 @@
   body[dir="rtl"] .req-status { font-family: var(--f-ar); font-size: 11px; letter-spacing: 0; text-transform: none; }
   .req-status.is-approved { color: var(--open); border-color: var(--open-line); background: var(--open-bg); }
   .req-status.is-pending  { color: var(--accent); border-color: var(--accent); }
+  /* Refused has to read as settled, not as still-waiting - muted, not alarming. */
+  .req-status.is-declined { color: var(--ink-2); border-color: var(--line); background: var(--tint); }
 </style>
 </head>
 <body>

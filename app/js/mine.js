@@ -58,9 +58,15 @@ function card(req, tr, onSaved) {
   const known = typeById(req.type_id);
   type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m";
 
+  // 🚨 Three states, not two. Testing as Sara showed a request Ahmed had DECLINED
+  // being labelled "waiting" - because the page only ever asked "is it approved?"
+  // and called everything else pending. She would have gone on expecting an
+  // answer that had already been given.
   const status = document.createElement("span");
-  status.className = "req-status " + (req.status === "approved" ? "is-approved" : "is-pending");
-  status.textContent = req.status === "approved" ? tr.statusApproved : tr.statusPending;
+  const shown = { approved: "is-approved", declined: "is-declined" }[req.status] || "is-pending";
+  const label = { approved: tr.statusApproved, declined: tr.statusDeclined }[req.status] || tr.statusPending;
+  status.className = "req-status " + shown;
+  status.textContent = label;
 
   top.append(when, type, status);
   el.appendChild(top);
@@ -97,13 +103,14 @@ function card(req, tr, onSaved) {
   // Withdrawing is offered only while the request is still pending. Once Ahmed
   // has approved it the time is on his calendar, and taking it back is a
   // conversation rather than a button - the database refuses it either way.
-  if (req.status === "pending") {
+  if (req.status === "pending" || req.status === "declined") {
+    const declined = req.status === "declined";
     const cancel = document.createElement("button");
     cancel.type = "button";
     cancel.className = "btn btn-quiet";
-    cancel.textContent = tr.cancelReq;
+    cancel.textContent = declined ? tr.clearReq : tr.cancelReq;
     cancel.addEventListener("click", async () => {
-      if (!window.confirm(tr.cancelConfirm)) return;
+      if (!window.confirm(declined ? tr.clearConfirm : tr.cancelConfirm)) return;
       cancel.disabled = true;
       try {
         await cancelRequest(req.id);
