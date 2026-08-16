@@ -151,7 +151,10 @@ function readWhen(dateStr, timeStr) {
   const t2 = /^(\d{2}):(\d{2})$/.exec(String(timeStr || ""));
   if (!d || !t2) return null;
   const mins = Number(t2[1]) * 60 + Number(t2[2]);
-  return cairoInstant(Number(d[1]), Number(d[2]), Number(d[3]), mins);
+  // 🚨 MONTH IS ZERO-BASED. cairoInstant feeds Date.UTC, so August is 7, not 8.
+  // Passing the calendar month straight through moved a real meeting from
+  // 17 August to 17 September - right time, wrong month, no error anywhere.
+  return cairoInstant(Number(d[1]), Number(d[2]) - 1, Number(d[3]), mins);
 }
 
 // The stored instant, expressed as Cairo wall clock, for the date and time

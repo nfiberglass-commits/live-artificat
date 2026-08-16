@@ -19,6 +19,18 @@ const check = (name, ok, extra) => {
 console.log("\n== constants survived the split ==");
 check("working day is 09:30-16:30", DAY_START === 570 && DAY_END === 990, DAY_START + "-" + DAY_END);
 check("midday hold is 13:00-14:00", BREAK_A === 780 && BREAK_B === 840);
+// 🚨 Regression guard. A date input reads "2026-08-17", but cairoInstant feeds
+// Date.UTC where months are zero-based. Passing 8 instead of 7 moved a real
+// meeting from 17 August to 17 September, silently. Never again.
+{
+  const d = /^(\d{4})-(\d{2})-(\d{2})$/.exec("2026-08-17");
+  const instant = cairoInstant(Number(d[1]), Number(d[2]) - 1, Number(d[3]), 12 * 60);
+  const shown = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Cairo", year: "numeric", month: "2-digit", day: "2-digit"
+  }).format(instant);
+  check("a date input round-trips to the same Cairo day", shown === "2026-08-17", shown);
+}
+
 check("six meeting types", TYPES.length === 6, TYPES.map(t => t.id).join(","));
 // The first entry is what the page pre-selects, so this is Ahmed's default.
 check("follow-up is the default and runs 60m",
