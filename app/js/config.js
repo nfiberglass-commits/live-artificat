@@ -18,10 +18,10 @@ export const SUPPORT_EMAIL = "a.abbas@nileindustries.com";
 // back a real Supabase session. The service key stays on that server and never
 // reaches the browser, so this endpoint grants nothing on its own - a wrong PIN
 // gets a 401 and Row Level Security still decides what a valid session may read.
-export const PIN_LOGIN_URL = "https://nile-industries.app.n8n.cloud/webhook/ni-book-login";
+export const PIN_LOGIN_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-book-login";
 
 // Names for the sign-in dropdown. Returns employee code and name only - no PIN
 // and no other column. ⚠ This does publish the staff list to anyone who opens
 // the page; Ahmed weighed that against making people remember a number and chose
 // the dropdown, matching the HR panels they already use.
-export const USERS_URL = "https://nile-industries.app.n8n.cloud/webhook/ni-book-users";
+export const USERS_URL = "https://n8n.srv1901390.hstgr.cloud/webhook/ni-book-users";
