@@ -256,7 +256,15 @@ export function renderSession() {
   $("gate").hidden = signedIn;
   if (!signedIn) return;
 
-  $("sessionWho").textContent = state.profile?.email || state.session.user?.email || "";
+  // Show the person, not the plumbing. Signing in by employee code produces an
+  // address like emp-18@staff.nileindustries.local, which is an identifier the
+  // system needs and the reader never should. The name is what they recognise.
+  $("sessionWho").textContent =
+    state.profile?.full_name ||
+    state.session.user?.user_metadata?.full_name ||
+    state.profile?.email ||
+    state.session.user?.email ||
+    "";
   const role = $("sessionRole");
   role.hidden = !isAdmin();
   role.textContent = tr.roleAdmin;
