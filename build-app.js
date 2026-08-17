@@ -257,7 +257,7 @@ const EXTRA_CSS = `
     gap: 8px;
     margin-bottom: 12px;
   }
-  .req-move input {
+  .req-move input, .req-move select {
     font-family: var(--f-mono);
     font-size: 13px;
     padding: 7px 9px;
@@ -266,7 +266,7 @@ const EXTRA_CSS = `
     background: var(--surface);
     color: var(--ink);
   }
-  .req-move input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+  .req-move input:focus, .req-move select:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
 
   .req-points-edit {
     width: 100%;

@@ -182,13 +182,14 @@ export async function loadUpcoming() {
   return data;
 }
 
-// Move an approved meeting. The duration is carried over rather than recomputed,
-// so a 20-minute call stays 20 minutes wherever it lands. guard_slot_free runs
-// on the update, so a move onto an occupied time is refused by the database.
-export async function moveMeeting(id, startsAt) {
+// Move an approved meeting, optionally to a new length. Without a length the
+// duration is carried over rather than recomputed, so a 20-minute call stays
+// 20 minutes wherever it lands. guard_slot_free runs on the update, so a move
+// onto an occupied time is refused by the database.
+export async function moveMeeting(id, startsAt, minutes) {
   const req = (state.upcoming || []).find((r) => r.id === id);
   if (!req) throw new Error("NOT_FOUND");
-  const mins = Math.round((Date.parse(req.ends_at) - Date.parse(req.starts_at)) / 60000);
+  const mins = minutes || Math.round((Date.parse(req.ends_at) - Date.parse(req.starts_at)) / 60000);
   const ends = new Date(startsAt.getTime() + mins * 60000);
   const { error } = await supabase
     .from("meeting_requests")

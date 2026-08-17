@@ -10,6 +10,25 @@ import { toast } from "./ui.js";
 
 const $ = (id) => document.getElementById(id);
 
+// Ahmed asked for control over the length: stretch a call that grew an agenda,
+// or halve a slot that does not need the hour. Employees still book the type's
+// fixed length; only these admin cards carry the selector.
+const DUR_CHOICES = [20, 30, 45, 60, 90, 120];
+
+function durSelect(current, title) {
+  const sel = document.createElement("select");
+  const opts = DUR_CHOICES.includes(current) ? DUR_CHOICES : [current, ...DUR_CHOICES];
+  for (const m of opts) {
+    const o = document.createElement("option");
+    o.value = String(m);
+    o.textContent = m + "m";
+    if (m === current) o.selected = true;
+    sel.appendChild(o);
+  }
+  sel.title = title;
+  return sel;
+}
+
 export function renderApprovals(onDone) {
   const panel = $("approvals");
   if (!isAdmin()) { panel.hidden = true; return; }
@@ -88,7 +107,8 @@ function upcomingCard(req, tr, onDone) {
   timeIn.step = "300";
   timeIn.value = parts.time;
   timeIn.title = tr.apprMove;
-  move.append(dateIn, timeIn);
+  const durIn = durSelect(mins, tr.apprDur);
+  move.append(dateIn, timeIn, durIn);
   el.appendChild(move);
 
   if (String(req.points || "").trim()) {
@@ -110,7 +130,7 @@ function upcomingCard(req, tr, onDone) {
     if (!when) { toast(tr.upBadTime); return; }
     save.disabled = true;
     try {
-      await moveMeeting(req.id, when);
+      await moveMeeting(req.id, when, Number(durIn.value) || mins);
       toast(tr.upMoved);
       await onDone();
     } catch (e) {
@@ -221,7 +241,8 @@ function card(req, tr, onDone) {
   timeIn.step = "300";
   timeIn.value = parts.time;
   timeIn.title = tr.apprMove;
-  move.append(dateIn, timeIn);
+  const durIn = durSelect(mins, tr.apprDur);
+  move.append(dateIn, timeIn, durIn);
   el.appendChild(move);
 
   const points = document.createElement("textarea");
@@ -254,7 +275,8 @@ function card(req, tr, onDone) {
     const [hh, mm] = timeIn.value.split(":").map(Number);
     if (!y || !m || !d || Number.isNaN(hh) || Number.isNaN(mm)) return null;
     const start = cairoInstant(y, m - 1, d, hh * 60 + mm);
-    return { startIso: start.toISOString(), endIso: new Date(start.getTime() + mins * 60000).toISOString() };
+    const chosen = Number(durIn.value) || mins;
+    return { startIso: start.toISOString(), endIso: new Date(start.getTime() + chosen * 60000).toISOString() };
   }
 
   save.addEventListener("click", async () => {
