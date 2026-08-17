@@ -659,7 +659,7 @@ window.NI_BUSY = [
     </div>
     <div class="rule">
       <h3 data-t="rNoticeH">Notice</h3>
-      <p data-t="rNoticeBody">Calls need one working day. A factory visit needs three, so the plant and the technical office can prepare.</p>
+      <p data-t="rNoticeBody">Any open slot can be requested, even today. The slot is only booked once Ahmed approves it.</p>
     </div>
     <div class="rule">
       <h3 data-t="rClosedH">Closed days</h3>
@@ -711,13 +711,18 @@ window.NI_BUSY = [
   // Egyptian public holidays that fall inside the booking horizon.
   var HOLIDAYS = { "2026-08-25": { en: "Mawlid — public holiday", ar: "المولد النبوي — إجازة رسمية" } };
 
+  // Notice is zero everywhere by Ahmed's call (17-08): a slot is only a request,
+  // he approves or declines, so the gate is him rather than a waiting period.
+  // Same-day slots that already passed are filtered at render time.
+  // (Comments must stay OUTSIDE the [ ] - the build extracts this literal with a
+  // string-aware bracket scan that does not understand comments.)
   var TYPES = [
-    { id: "followup",   mins: 60, notice: 1, en: "Follow-up meeting", ar: "اجتماع متابعة" },
-    { id: "call",    mins: 20, notice: 1, en: "Quick call",          ar: "مكالمة سريعة" },
-    { id: "commercial", mins: 45, notice: 1, en: "Commercial / RFQ",  ar: "تجاري / طلب عرض سعر" },
-    { id: "technical",  mins: 45, notice: 1, en: "Technical review",  ar: "مراجعة فنية" },
-    { id: "internal",   mins: 30, notice: 1, en: "Team one-to-one",   ar: "اجتماع فردي للفريق" },
-    { id: "visit",      mins: 90, notice: 3, en: "Factory visit",     ar: "زيارة المصنع" }
+    { id: "followup",   mins: 60, notice: 0, en: "Follow-up meeting", ar: "اجتماع متابعة" },
+    { id: "call",    mins: 20, notice: 0, en: "Quick call",          ar: "مكالمة سريعة" },
+    { id: "commercial", mins: 45, notice: 0, en: "Commercial / RFQ",  ar: "تجاري / طلب عرض سعر" },
+    { id: "technical",  mins: 45, notice: 0, en: "Technical review",  ar: "مراجعة فنية" },
+    { id: "internal",   mins: 30, notice: 0, en: "Team one-to-one",   ar: "اجتماع فردي للفريق" },
+    { id: "visit",      mins: 90, notice: 0, en: "Factory visit",     ar: "زيارة المصنع" }
   ];
 
   var T = {
@@ -750,7 +755,7 @@ window.NI_BUSY = [
       needTopic: "Add at least one point to discuss.",
       rHoursH: "Standing hours", rHoursTz: "Cairo", rHoursDays: "Saturday to Thursday", rHoursFri: "Friday closed.",
       rBreakH: "Held daily", rBreakBody: "is never bookable. Mornings before 09:30 are reserved for the factory.",
-      rNoticeH: "Notice", rNoticeBody: "Calls need one working day. A factory visit needs three, so the plant and the technical office can prepare.",
+      rNoticeH: "Notice", rNoticeBody: "Any open slot can be requested, even today. The slot is only booked once Ahmed approves it.",
       rClosedH: "Closed days", rClosedBody: "Fridays, and Egyptian public holidays. The next one is Mawlid on 25 August 2026.",
       copied: "Copied — paste it into WhatsApp.",
       copyFail: "Select the text and copy it manually.",
@@ -790,7 +795,7 @@ window.NI_BUSY = [
       needTopic: "اكتب نقطة واحدة على الأقل للمناقشة.",
       rHoursH: "مواعيد العمل", rHoursTz: "بتوقيت القاهرة", rHoursDays: "من السبت إلى الخميس", rHoursFri: "الجمعة إجازة.",
       rBreakH: "محجوز يومياً", rBreakBody: "غير متاح للحجز. والصباح قبل ٩:٣٠ مخصص للمصنع.",
-      rNoticeH: "المهلة", rNoticeBody: "المكالمات تحتاج يوم عمل واحد. وزيارة المصنع تحتاج ثلاثة أيام حتى يجهّز المصنع والمكتب الفني.",
+      rNoticeH: "المهلة", rNoticeBody: "أي وقت متاح يمكن طلبه، حتى اليوم نفسه. الموعد لا يُحجز إلا بعد موافقة أحمد.",
       rClosedH: "أيام الإغلاق", rClosedBody: "الجمعة، والإجازات الرسمية المصرية. أقربها المولد النبوي في ٢٥ أغسطس ٢٠٢٦.",
       copied: "تم النسخ — الصقه في الواتساب.",
       copyFail: "حدد النص وانسخه يدوياً.",
@@ -1010,6 +1015,8 @@ window.NI_BUSY = [
         col.appendChild(pastEl);
       } else {
         var res = slotsFor(c);
+        // Today is bookable with zero notice, but not the hours already gone.
+        res.list = res.list.filter(function (sl) { return sl.instant.getTime() > Date.now(); });
         if (res.blocked === "notice") {
           var nb = document.createElement("div");
           nb.className = "closed";

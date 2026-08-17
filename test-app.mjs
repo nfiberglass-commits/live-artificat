@@ -35,8 +35,12 @@ check("six meeting types", TYPES.length === 6, TYPES.map(t => t.id).join(","));
 // The first entry is what the page pre-selects, so this is Ahmed's default.
 check("follow-up is the default and runs 60m",
   TYPES[0].id === "followup" && TYPES[0].mins === 60, TYPES[0].mins + "m");
-check("factory visit is 90m with 3 days notice",
-  typeById("visit").mins === 90 && typeById("visit").notice === 3);
+// Zero notice everywhere is Ahmed's decision (17-08): a slot is only a request,
+// so the gate is his approval, not a waiting period.
+check("factory visit is 90m with zero notice",
+  typeById("visit").mins === 90 && typeById("visit").notice === 0);
+check("every type carries zero notice", TYPES.every(t => t.notice === 0),
+  TYPES.map(t => t.id + ":" + t.notice).join(","));
 check("Mawlid is still a closure", Boolean(HOLIDAYS["2026-08-25"]));
 check("both languages present", Boolean(STRINGS.en && STRINGS.ar));
 check("Arabic strings are actually Arabic", /[؀-ۿ]/.test(STRINGS.ar.h1), STRINGS.ar.h1);
@@ -81,9 +85,10 @@ check("90m slots never overrun 16:30", visit.list.every(s => s.end <= 990),
 check("a 90m slot can start at 15:00",
   visit.list.some(s => s.start === 900), visit.list.map(s => minToClock(s.start)).join(" "));
 
-console.log("\n== notice blocks earlier days ==");
-const tooSoon = slotsFor(cairoToday(), "call", null);
-check("today is refused for lack of notice", tooSoon.blocked === "notice", String(tooSoon.blocked));
+console.log("\n== zero notice opens today ==");
+const sameDay = slotsFor(cairoToday(), "call", null);
+check("today is not blocked by notice", sameDay.blocked === null, String(sameDay.blocked));
+check("today generates slots", sameDay.list.length > 0, String(sameDay.list.length));
 
 console.log("\n== busy predicate is honoured ==");
 const target = cairoInstant(visitDay.y, visitDay.mo, visitDay.d, 600); // 10:00

@@ -104,6 +104,9 @@ export function renderWeek() {
       col.appendChild(closedBlock(tr.past));
     } else {
       const res = slotsFor(c, state.typeId, overlapsBusy);
+      // With zero notice, today is bookable - but a time that has already
+      // struck is not. Filtering here keeps schedule.js pure and testable.
+      res.list = res.list.filter((s) => s.instant.getTime() > Date.now());
       if (res.blocked === "notice") {
         col.appendChild(closedBlock(tr.notice));
       } else if (!res.list.length) {

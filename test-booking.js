@@ -140,7 +140,7 @@ const friBody = friCol.children[1];
 check("Friday column is closed (hatched band, no slots)", friBody.className === "closed", friBody.className);
 check("Friday band says weekend", /weekend/i.test(friBody.children[0]._text), friBody.children[0]._text);
 
-console.log("\n== slot rules (default type = Quick call, 20m) ==");
+console.log("\n== slot rules (default type = Follow-up, 60m) ==");
 // gather all slot start labels across the week
 function slotLabels(col) {
   const b = col.children[1];
@@ -153,22 +153,24 @@ check("some bookable slots were generated", allSlots.length > 0, String(allSlots
 
 const toMin = s => { const [h, m] = s.split(":").map(Number); return h * 60 + m; };
 check("no slot starts before 09:30", allSlots.every(s => toMin(s) >= 570), allSlots.filter(s => toMin(s) < 570).join(","));
-check("no 20m slot ends after 16:30", allSlots.every(s => toMin(s) + 20 <= 990), allSlots.filter(s => toMin(s) + 20 > 990).join(","));
-check("the extended hours are used (a slot starts at or after 16:00)",
-  allSlots.some(s => toMin(s) >= 960), allSlots.join(","));
+check("no 60m slot ends after 16:30", allSlots.every(s => toMin(s) + 60 <= 990), allSlots.filter(s => toMin(s) + 60 > 990).join(","));
+check("the extended hours are used (a 60m slot starts at 15:30)",
+  allSlots.some(s => toMin(s) >= 930), allSlots.join(","));
 const inBreak = allSlots.filter(s => { const m = toMin(s); return m >= 780 && m < 840; });
 check("no slot starts inside the held 13:00-14:00 hour", inBreak.length === 0, inBreak.join(","));
 
 const uniq = [...new Set(allSlots)].sort((a, b) => toMin(a) - toMin(b));
 console.log("       distinct start times: " + uniq.join(" "));
 
-console.log("\n== notice rule ==");
-// today's column should be blocked for a 1-working-day notice
+console.log("\n== zero notice: today is requestable ==");
+// Ahmed's rule since 17-08: every slot is only a request he approves or
+// declines, so no day is closed for notice. Today shows its remaining slots
+// (or "none" late in the day) - never the notice band.
 const todayCol = week.children.find(c => (c.className || "").includes("today"));
 if (todayCol) {
   const bodyEl = todayCol.children[1];
-  check("today is not bookable (needs one working day's notice)",
-    bodyEl.className === "closed" && /notice/i.test(bodyEl.children[0]._text),
+  check("today is not blocked by a notice rule",
+    !(bodyEl.className === "closed" && /notice/i.test(bodyEl.children[0]._text)),
     bodyEl.className + " / " + (bodyEl.children[0] ? bodyEl.children[0]._text : ""));
 } else {
   console.log("  SKIP  today is outside the rendered week");
@@ -251,22 +253,25 @@ check("body returns to LTR", body._attrs.dir === "ltr", body._attrs.dir);
 console.log("\n== holiday ==");
 // jump forward to the week containing 25 Aug 2026 (Mawlid)
 const next = byId.get("next");
+// Check the week already on screen BEFORE clicking - earlier sections may have
+// left the view a week ahead, and click-first scanning walked straight past
+// the Mawlid week without ever looking at it.
 let foundHoliday = false;
-for (let i = 0; i < 3; i++) {
-  listeners.get(next).click();
+for (let i = 0; i < 4; i++) {
   for (const col of byId.get("week").children) {
     const b = col.children[1];
     if (b && b.className === "closed" && /Mawlid/i.test(b.children[0]._text || "")) foundHoliday = true;
   }
   if (foundHoliday) break;
+  listeners.get(next).click();
 }
 check("Mawlid 25-Aug-2026 renders as a closed day", foundHoliday);
 
-console.log("\n== the form asks employees for two things only ==");
+console.log("\n== the form asks employees for three things only ==");
 const inputIds = [...html.matchAll(/<(?:input|textarea|select)[^>]*\bid="([^"]+)"/g)].map(m => m[1]);
-check("exactly two fields on the form", inputIds.length === 2, inputIds.join(","));
-check("they are who-is-coming and the points",
-  inputIds.sort().join(",") === "fAttend,fTopic", inputIds.join(","));
+check("exactly three fields on the form", inputIds.length === 3, inputIds.join(","));
+check("they are who-is-coming, the place and the points",
+  inputIds.sort().join(",") === "fAttend,fTopic,fWhere", inputIds.join(","));
 check("no name / company / email / phone field remains",
   !/\bid="f(Name|Company|Email|Phone)"/.test(html));
 check("no timezone picker remains", !/\bid="tz"/.test(html));
