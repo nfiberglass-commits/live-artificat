@@ -32,7 +32,7 @@ export async function loadBusy() {
 export async function loadMyRequests() {
   const { data, error } = await supabase
     .from("meeting_requests")
-    .select("id, starts_at, ends_at, type_id, type_label, attending, points, status, created_at")
+    .select("id, starts_at, ends_at, type_id, type_label, attending, points, location, status, created_at")
     .gte("ends_at", new Date().toISOString())
     .order("starts_at");
   if (error) throw error;
@@ -44,7 +44,7 @@ export async function loadPending() {
   if (!isAdmin()) { set({ pending: [] }); return []; }
   const { data, error } = await supabase
     .from("meeting_requests")
-    .select("id, requester_id, starts_at, ends_at, type_id, type_label, attending, points, status, created_at")
+    .select("id, requester_id, starts_at, ends_at, type_id, type_label, attending, points, location, status, created_at")
     .eq("status", "pending")
     .gte("ends_at", new Date().toISOString())
     .order("starts_at");
@@ -173,7 +173,7 @@ export async function loadUpcoming() {
   if (!isAdmin()) { set({ upcoming: [] }); return []; }
   const { data, error } = await supabase
     .from("meeting_requests")
-    .select("id, requester_id, starts_at, ends_at, type_id, type_label, attending, points, status")
+    .select("id, requester_id, starts_at, ends_at, type_id, type_label, attending, points, location, status")
     .eq("status", "approved")
     .gte("ends_at", new Date().toISOString())
     .order("starts_at");
@@ -222,7 +222,7 @@ export async function loadProfile(userId) {
 
 /* ---------- writes ---------- */
 
-export async function requestMeeting({ startIso, endIso, typeId, typeLabel, attending, points }) {
+export async function requestMeeting({ startIso, endIso, typeId, typeLabel, attending, points, location }) {
   const { data, error } = await supabase
     .from("meeting_requests")
     .insert({
@@ -232,7 +232,8 @@ export async function requestMeeting({ startIso, endIso, typeId, typeLabel, atte
       type_id: typeId,
       type_label: typeLabel,
       attending,
-      points
+      points,
+      location: location || null
     })
     .select("id, starts_at, ends_at, status")
     .single();
@@ -257,8 +258,9 @@ export async function savePoints(id, points) {
 
 // Ahmed moving a meeting and rewriting its agenda in one save.
 // A clash comes back as 409 from the database guard, not from the browser.
-export async function saveRequest(id, { startIso, endIso, points }) {
+export async function saveRequest(id, { startIso, endIso, points, location }) {
   const patch = { points };
+  if (location) patch.location = location;
   if (startIso && endIso) {
     patch.starts_at = startIso;
     patch.ends_at = endIso;

@@ -56,7 +56,9 @@ function card(req, tr, onSaved) {
   // Same reason as the approvals card: show the label in the language on screen,
   // not the English one frozen at booking time.
   const known = typeById(req.type_id);
-  type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m";
+  const where = req.location === "office" ? tr.whereOffice : req.location === "factory" ? tr.whereFactory : req.location;
+  type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m"
+    + (where ? " · " + where : "");
 
   // 🚨 Three states, not two. Testing as Sara showed a request Ahmed had DECLINED
   // being labelled "waiting" - because the page only ever asked "is it approved?"

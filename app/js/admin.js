@@ -15,6 +15,28 @@ const $ = (id) => document.getElementById(id);
 // fixed length; only these admin cards carry the selector.
 const DUR_CHOICES = [20, 30, 45, 60, 90, 120];
 
+// Where the meeting happens. Stored as a code so the label always follows the
+// page language; anything else in the column (old rows, free text) shows as-is.
+function locLabel(tr, code) {
+  if (code === "office") return tr.whereOffice;
+  if (code === "factory") return tr.whereFactory;
+  return code || "";
+}
+
+function locSelect(current, title) {
+  const sel = document.createElement("select");
+  const tr = t();
+  for (const code of ["factory", "office"]) {
+    const o = document.createElement("option");
+    o.value = code;
+    o.textContent = locLabel(tr, code);
+    if (code === (current || "factory")) o.selected = true;
+    sel.appendChild(o);
+  }
+  sel.title = title;
+  return sel;
+}
+
 function durSelect(current, title) {
   const sel = document.createElement("select");
   const opts = DUR_CHOICES.includes(current) ? DUR_CHOICES : [current, ...DUR_CHOICES];
@@ -91,7 +113,8 @@ function upcomingCard(req, tr, onDone) {
   const type = document.createElement("span");
   type.className = "req-type";
   const known = typeById(req.type_id);
-  type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m";
+  type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m"
+    + (req.location ? " · " + locLabel(tr, req.location) : "");
 
   top.append(who, type);
   el.appendChild(top);
@@ -242,7 +265,8 @@ function card(req, tr, onDone) {
   timeIn.value = parts.time;
   timeIn.title = tr.apprMove;
   const durIn = durSelect(mins, tr.apprDur);
-  move.append(dateIn, timeIn, durIn);
+  const locIn = locSelect(req.location, tr.fWhere);
+  move.append(dateIn, timeIn, durIn, locIn);
   el.appendChild(move);
 
   const points = document.createElement("textarea");
@@ -285,7 +309,7 @@ function card(req, tr, onDone) {
     const times = movedTimes();
     lock(true);
     try {
-      await saveRequest(req.id, { ...(times || {}), points: text });
+      await saveRequest(req.id, { ...(times || {}), points: text, location: locIn.value });
       toast(tr.saved);
       await onDone();
     } catch (err) {
@@ -301,7 +325,7 @@ function card(req, tr, onDone) {
       const text = points.value.trim();
       const times = movedTimes();
       if (status === "approved" && text) {
-        await saveRequest(req.id, { ...(times || {}), points: text });
+        await saveRequest(req.id, { ...(times || {}), points: text, location: locIn.value });
       }
       await decide(req.id, status);
       toast(message);

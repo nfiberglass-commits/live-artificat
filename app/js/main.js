@@ -230,6 +230,7 @@ $("send").addEventListener("click", async () => {
   const tr = t();
   const attending = $("fAttend").value.trim();
   const points = $("fTopic").value.trim();
+  const location = $("fWhere").value;
 
   if (!attending) { toast(tr.needAttend); $("fAttend").focus(); return; }
   if (!points) { toast(tr.needTopic); $("fTopic").focus(); return; }
@@ -246,7 +247,7 @@ $("send").addEventListener("click", async () => {
       startIso, endIso,
       typeId: type.id,
       typeLabel: type.en,
-      attending, points
+      attending, points, location
     });
     $("fAttend").value = "";
     $("fTopic").value = "";

@@ -628,6 +628,13 @@ window.NI_BUSY = [
         <input id="fAttend" type="text" autocomplete="off">
       </div>
       <div class="field full">
+        <label class="lbl" for="fWhere" data-t="fWhere">Where</label>
+        <select id="fWhere">
+          <option value="factory" data-t="whereFactory" selected>Factory</option>
+          <option value="office" data-t="whereOffice">Head office</option>
+        </select>
+      </div>
+      <div class="field full">
         <label class="lbl" for="fTopic" data-t="fTopic">Points to discuss</label>
         <textarea id="fTopic" placeholder=""></textarea>
       </div>
@@ -723,6 +730,7 @@ window.NI_BUSY = [
       bhWhen: "Cairo time",
       bhType: "Meeting",
       fAttend: "Who is coming", fTopic: "Points to discuss",
+      fWhere: "Where", whereFactory: "Factory", whereOffice: "Head office",
       attendPlaceholder: "Names of everyone attending",
       topicPlaceholder: "One line per point. What do you need decided or approved?",
       btnSend: "Send request by email", btnBook: "Request this slot", btnCopy: "Copy for WhatsApp",
@@ -762,6 +770,7 @@ window.NI_BUSY = [
       bhWhen: "توقيت القاهرة",
       bhType: "نوع الاجتماع",
       fAttend: "مَن سيحضر", fTopic: "النقاط المطلوب مناقشتها",
+      fWhere: "المكان", whereFactory: "المصنع", whereOffice: "المكتب الرئيسي",
       attendPlaceholder: "أسماء كل الحاضرين",
       topicPlaceholder: "نقطة في كل سطر. ما الذي تريد قراراً أو اعتماداً فيه؟",
       btnSend: "أرسل الطلب بالبريد", btnBook: "اطلب هذا الموعد", btnCopy: "انسخ للواتساب",
@@ -1085,6 +1094,7 @@ window.NI_BUSY = [
     lines.push(t.rWhen + ": " + fmt(selected.instant, CAIRO, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " — " + minToClock(selected.start));
     lines.push(t.rType + ": " + type[lang] + " (" + type.mins + " min)");
     lines.push(t.rAttend + ": " + v("fAttend"));
+    lines.push(t.fWhere + ": " + (v("fWhere") === "office" ? t.whereOffice : t.whereFactory));
     lines.push("");
     lines.push(t.rTopic + ":");
     v("fTopic").split("\n").forEach(function (line) {
