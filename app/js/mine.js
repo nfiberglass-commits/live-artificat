@@ -56,7 +56,7 @@ function card(req, tr, onSaved) {
   // Same reason as the approvals card: show the label in the language on screen,
   // not the English one frozen at booking time.
   const known = typeById(req.type_id);
-  const where = req.location === "office" ? tr.whereOffice : req.location === "factory" ? tr.whereFactory : req.location;
+  const where = req.location === "hosary" ? tr.whereOffice : req.location === "factory" ? tr.whereFactory : req.location;
   type.textContent = (known ? (state.lang === "ar" ? known.ar : known.en) : req.type_label) + " · " + mins + "m"
     + (where ? " · " + where : "");
 

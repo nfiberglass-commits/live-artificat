@@ -16,17 +16,20 @@ const $ = (id) => document.getElementById(id);
 const DUR_CHOICES = [20, 30, 45, 60, 90, 120];
 
 // Where the meeting happens. Stored as a code so the label always follows the
-// page language; anything else in the column (old rows, free text) shows as-is.
+// page language. 'hosary' is the head office - the code predates this field's
+// UI and the database constraint only accepts hosary/factory/online, so the
+// page speaks the constraint's language rather than inventing a fourth word.
 function locLabel(tr, code) {
-  if (code === "office") return tr.whereOffice;
+  if (code === "hosary") return tr.whereOffice;
   if (code === "factory") return tr.whereFactory;
+  if (code === "online") return "Online";
   return code || "";
 }
 
 function locSelect(current, title) {
   const sel = document.createElement("select");
   const tr = t();
-  for (const code of ["factory", "office"]) {
+  for (const code of ["factory", "hosary"]) {
     const o = document.createElement("option");
     o.value = code;
     o.textContent = locLabel(tr, code);

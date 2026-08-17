@@ -631,7 +631,7 @@ window.NI_BUSY = [
         <label class="lbl" for="fWhere" data-t="fWhere">Where</label>
         <select id="fWhere">
           <option value="factory" data-t="whereFactory" selected>Factory</option>
-          <option value="office" data-t="whereOffice">Head office</option>
+          <option value="hosary" data-t="whereOffice">Head office</option>
         </select>
       </div>
       <div class="field full">
@@ -1094,7 +1094,7 @@ window.NI_BUSY = [
     lines.push(t.rWhen + ": " + fmt(selected.instant, CAIRO, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + " — " + minToClock(selected.start));
     lines.push(t.rType + ": " + type[lang] + " (" + type.mins + " min)");
     lines.push(t.rAttend + ": " + v("fAttend"));
-    lines.push(t.fWhere + ": " + (v("fWhere") === "office" ? t.whereOffice : t.whereFactory));
+    lines.push(t.fWhere + ": " + (v("fWhere") === "hosary" ? t.whereOffice : t.whereFactory));
     lines.push("");
     lines.push(t.rTopic + ":");
     v("fTopic").split("\n").forEach(function (line) {

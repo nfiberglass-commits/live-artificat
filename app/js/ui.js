@@ -205,7 +205,7 @@ export function requestText() {
     " — " + minToClock(state.selected.start));
   lines.push(tr.rType + ": " + type[state.lang] + " (" + type.mins + " min)");
   lines.push(tr.rAttend + ": " + v("fAttend"));
-  lines.push(tr.fWhere + ": " + (v("fWhere") === "office" ? tr.whereOffice : tr.whereFactory));
+  lines.push(tr.fWhere + ": " + (v("fWhere") === "hosary" ? tr.whereOffice : tr.whereFactory));
   lines.push("");
   lines.push(tr.rTopic + ":");
   v("fTopic").split("\n").forEach((line) => {
